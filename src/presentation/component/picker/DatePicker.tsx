@@ -1,11 +1,5 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, StyleProp, ViewStyle} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import {Icon} from 'react-native-elements';
@@ -43,8 +37,12 @@ export const DatePicker: React.FC<DatePickerProps> = (props) => {
       <TouchableOpacity
         onPress={togglePicker}
         style={[styles.container, props.containerStyle]}>
-        <TextView text={moment(value).format('DD-MM-YYYY')} />
         <Icon name="calendar-outline" type="ionicon" />
+        <TextView
+          style={styles.title}
+          text={moment(value).format('DD-MM-YYYY')}
+        />
+        <Icon name="chevron-down-outline" type="ionicon" />
       </TouchableOpacity>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -66,5 +64,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     justifyContent: 'space-between',
+  },
+  title: {
+    flex: 1,
+    marginLeft: 16,
   },
 });

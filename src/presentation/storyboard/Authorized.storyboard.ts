@@ -4,4 +4,5 @@ export interface AuthorizedStoryboardParamList extends ParamListBase {
   DistributorList: undefined;
   ConsignmentAdding: undefined;
   ConsignmentList: undefined;
+  DistributorAdding: undefined;
 }

@@ -1,52 +1,49 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, StyleProp, ViewStyle} from 'react-native';
 import {TextView} from '../label';
 import moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {Icon} from 'react-native-elements';
+import {LightTheme} from '@resources';
 
 export type TimePickerProps = {
   onChangeValue?: (value: Date) => void;
   containerStyle?: StyleProp<ViewStyle>;
-  defaltValue?: Date;
+  defaultValue?: Date;
 };
 
 export const TimePicker: React.FC<TimePickerProps> = (props) => {
-  const [value, setValue] = React.useState(props.defaltValue);
+  const {onChangeValue} = props;
+  const [value, setValue] = React.useState(props.defaultValue);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
-  const toglePicker = React.useCallback(() => {
+  const togglePicker = React.useCallback(() => {
     setTimePickerVisible(!isTimePickerVisible);
   }, [isTimePickerVisible]);
 
   const handleConfirm = React.useCallback(
     (date: Date) => {
-      toglePicker();
+      togglePicker();
       setValue(date);
-      if (props.onChangeValue) {
-        props.onChangeValue(date);
+      if (onChangeValue) {
+        onChangeValue(date);
       }
     },
-    [toglePicker, props.onChangeValue],
+    [onChangeValue, togglePicker],
   );
 
   return (
     <>
       <TouchableOpacity
-        onPress={toglePicker}
+        onPress={togglePicker}
         style={[styles.container, props.containerStyle]}>
         <TextView text={moment(value).format('HH:mm')} />
-        <Image source={AssetIcons.GRAY_CLOCK} />
+        <Icon name="calendar-outline" type="ionicon" />
       </TouchableOpacity>
       <DateTimePickerModal
         isVisible={isTimePickerVisible}
         mode="time"
         onConfirm={handleConfirm}
-        onCancel={toglePicker}
+        onCancel={togglePicker}
       />
     </>
   );
@@ -54,13 +51,13 @@ export const TimePicker: React.FC<TimePickerProps> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: SizeDimens.mdInput,
-    borderRadius: SizeDimens.mdInput * 0.5,
+    height: 44,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.primaryBlue,
+    borderColor: LightTheme.colorScheme.secondary,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: responsiveWidth(4),
+    paddingHorizontal: 8,
     justifyContent: 'space-between',
   },
 });

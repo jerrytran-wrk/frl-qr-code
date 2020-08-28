@@ -45,6 +45,10 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
 
   const title = React.useMemo(() => 'Nhà phân phối', []);
 
+  const onAddButtonPress = React.useCallback(() => {
+    navigation.navigate('DistributorAdding');
+  }, [navigation]);
+
   const onItemPress = React.useCallback(() => {
     navigation.navigate('ConsignmentList');
   }, [navigation]);
@@ -77,7 +81,7 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
             <Icon
               name="add-outline"
               type="ionicon"
-              // onPress={goToConsignmentAdding}
+              onPress={onAddButtonPress}
             />
           }
         />

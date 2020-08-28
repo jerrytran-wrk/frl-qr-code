@@ -1,19 +1,17 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Modal,
-  StatusBar,
   ListRenderItemInfo,
   TouchableWithoutFeedback,
 } from 'react-native';
+
+import {ListItem, Header} from 'react-native-elements';
+
+import {LightTheme, Colors} from '@resources';
+
 import {ListView} from '../listing';
-import {Colors, FontSizeDimens, TextStyles, LinearColors} from '@res';
-import {Card, ListItem, SearchBar, Header} from 'react-native-elements';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {FlatList} from 'react-native-gesture-handler';
-import LinearGradient from 'react-native-linear-gradient';
 
 export type KeyValuePair = {
   id: string;
@@ -29,11 +27,12 @@ export type ModalPickerProps = {
 };
 
 export const ModalPicker: React.FC<ModalPickerProps> = (props) => {
+  const {onPickItem} = props;
   const onPressItem = React.useCallback(
     (item: KeyValuePair) => () => {
-      props.onPickItem(item);
+      onPickItem(item);
     },
-    [],
+    [onPickItem],
   );
 
   const renderItem = React.useCallback(
@@ -47,7 +46,7 @@ export const ModalPicker: React.FC<ModalPickerProps> = (props) => {
         />
       );
     },
-    [],
+    [onPressItem],
   );
 
   const keyExtractor = React.useCallback((item: KeyValuePair) => item.id, []);
@@ -58,15 +57,14 @@ export const ModalPicker: React.FC<ModalPickerProps> = (props) => {
         <TouchableWithoutFeedback>
           <>
             <Header
-              ViewComponent={LinearGradient}
-              linearGradientProps={{colors: LinearColors.lineRed}}
+              statusBarProps={{backgroundColor: Colors.OVERLAY}}
               centerComponent={{
                 text: props.title,
                 style: {
-                  color: Colors.primaryWhite,
-                  ...TextStyles.navTitle,
+                  color: LightTheme.colorScheme.onSecondary,
                 },
               }}
+              backgroundColor={LightTheme.colorScheme.secondary}
             />
             <ListView
               style={styles.list}
@@ -78,7 +76,7 @@ export const ModalPicker: React.FC<ModalPickerProps> = (props) => {
         </TouchableWithoutFeedback>
       </View>
     );
-  }, [props.data]);
+  }, [keyExtractor, props.data, props.title, renderItem]);
 
   return (
     <Modal
@@ -86,7 +84,6 @@ export const ModalPicker: React.FC<ModalPickerProps> = (props) => {
       animationType="fade"
       visible={props.visible}
       transparent>
-      <StatusBar backgroundColor={Colors.primaryOverlay} />
       <TouchableWithoutFeedback onPress={props.onRequestClose}>
         <View style={styles.container}>{renderListValue}</View>
       </TouchableWithoutFeedback>
@@ -99,13 +96,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.primaryOverlay,
+    backgroundColor: Colors.OVERLAY,
     padding: '5%',
   },
   card: {
     height: '60%',
     width: '100%',
-    backgroundColor: Colors.primaryWhite,
+    backgroundColor: LightTheme.colorScheme.background,
     borderRadius: 24,
     shadowColor: '#000000',
     shadowOffset: {
@@ -121,6 +118,5 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: 'transparent',
-    paddingVertical: responsiveHeight(3),
   },
 });

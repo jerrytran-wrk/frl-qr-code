@@ -11,6 +11,7 @@ import {
   TextField,
   RoundedButton,
   DatePicker,
+  ValuePicker,
 } from '@components';
 // importing from local file
 import {useConsignmentAdding} from './ConsignmentAdding.store';
@@ -23,7 +24,6 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
   const [state, action] = useConsignmentAdding();
   const {navigation} = props;
   const title = React.useMemo(() => 'Thêm Lô Hàng', []);
-  const distributorPlaceholder = React.useMemo(() => 'Nhà phân phối', []);
   const shipperPlaceholder = React.useMemo(() => 'Người giao hàng', []);
   const consignmentPlaceholder = React.useMemo(() => 'Lô Hàng', []);
 
@@ -35,12 +35,11 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
     return (
       <>
         <View style={ConsignmentAddingStyles.form}>
-          <TextField
+          <ValuePicker
             containerStyle={ConsignmentAddingStyles.formComponentDistance}
             prefix={<Icon name="albums-outline" type="ionicon" />}
-            inputProps={{
-              placeholder: distributorPlaceholder,
-            }}
+            data={[]}
+            // selectedId={}
           />
           <TextField
             containerStyle={ConsignmentAddingStyles.formComponentDistance}
@@ -56,7 +55,9 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
               placeholder: shipperPlaceholder,
             }}
           />
-          <DatePicker />
+          <DatePicker
+            containerStyle={ConsignmentAddingStyles.formComponentDistance}
+          />
         </View>
         <RoundedButton
           containerStyle={ConsignmentAddingStyles.saveButton}
@@ -64,7 +65,7 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
         />
       </>
     );
-  }, [consignmentPlaceholder, distributorPlaceholder, shipperPlaceholder]);
+  }, [consignmentPlaceholder, shipperPlaceholder]);
 
   return (
     <ErrorBoundary>

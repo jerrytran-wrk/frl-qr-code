@@ -13,10 +13,11 @@ export type ValuePickerProps = {
   title?: string;
   selectedId?: string;
   error?: string;
+  prefix?: React.ReactNode;
 };
 
 export const ValuePicker: React.FC<ValuePickerProps> = (props) => {
-  const {onChangeValue} = props;
+  const {onChangeValue, prefix} = props;
   const selectedItem = React.useMemo(() => {
     return props.data.find((x) => x.id === props.selectedId);
   }, [props.data, props.selectedId]);
@@ -47,6 +48,7 @@ export const ValuePicker: React.FC<ValuePickerProps> = (props) => {
       <TouchableOpacity
         onPress={togglePicker}
         style={[styles.container, props.containerStyle]}>
+        {prefix}
         <TextView text={selectedItem?.value} />
         <Icon name="chevron-down-outline" type="ionicon" />
       </TouchableOpacity>
@@ -71,6 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 8,
   },
   error: {
     marginTop: 4,

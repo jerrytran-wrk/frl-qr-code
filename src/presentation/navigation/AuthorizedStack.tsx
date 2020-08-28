@@ -4,7 +4,12 @@ import {enableScreens} from 'react-native-screens';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 
 import {AuthorizedStoryboardParamList} from '@storyboards';
-import {DistributorList, ConsignmentList, ConsignmentAdding} from '@containers';
+import {
+  DistributorList,
+  ConsignmentList,
+  ConsignmentAdding,
+  DistributorAdding,
+} from '@containers';
 
 enableScreens();
 const Stack = createNativeStackNavigator<AuthorizedStoryboardParamList>();
@@ -15,6 +20,7 @@ export const AuthorizedNavigator: React.FC = () => {
       <Stack.Screen name="DistributorList" component={DistributorList} />
       <Stack.Screen name="ConsignmentList" component={ConsignmentList} />
       <Stack.Screen name="ConsignmentAdding" component={ConsignmentAdding} />
+      <Stack.Screen name="DistributorAdding" component={DistributorAdding} />
     </Stack.Navigator>
   );
 };
