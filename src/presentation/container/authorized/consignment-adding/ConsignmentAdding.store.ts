@@ -1,10 +1,7 @@
 import {createStore, createHook} from 'react-sweet-state';
 import {ConsignmentAddingActions} from './ConsignmentAdding.action';
 import {ConsignmentAddingState} from './ConsignmentAdding.type';
-
-export const INITIAL_STATE: ConsignmentAddingState = {
-  status: 'INIT',
-};
+import {INITIAL_STATE} from './constants';
 
 export const ConsignmentAddingStore = createStore<
   ConsignmentAddingState,

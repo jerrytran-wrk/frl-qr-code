@@ -3,7 +3,9 @@ import {DistributorListActions} from './DistributorList.action';
 import {DistributorListState} from './DistributorList.type';
 
 export const INITIAL_STATE: DistributorListState = {
-  status: 'INIT',
+  distributors: [],
+  isLoading: false,
+  keyword: '',
 };
 
 export const DistributorListStore = createStore<

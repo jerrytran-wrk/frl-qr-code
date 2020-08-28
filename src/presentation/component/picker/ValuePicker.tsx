@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {StyleSheet, TouchableOpacity, StyleProp, ViewStyle} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  StyleProp,
+  ViewStyle,
+  ActivityIndicator,
+} from 'react-native';
 
 import {TextView} from '../label';
 import {ModalPicker, KeyValuePair} from './ModalPicker';
@@ -14,10 +20,11 @@ export type ValuePickerProps = {
   selectedId?: string;
   error?: string;
   prefix?: React.ReactNode;
+  isLoadData?: boolean;
 };
 
 export const ValuePicker: React.FC<ValuePickerProps> = (props) => {
-  const {onChangeValue, prefix} = props;
+  const {onChangeValue, prefix, isLoadData} = props;
   const selectedItem = React.useMemo(() => {
     return props.data.find((x) => x.id === props.selectedId);
   }, [props.data, props.selectedId]);
@@ -37,6 +44,13 @@ export const ValuePicker: React.FC<ValuePickerProps> = (props) => {
     [onChangeValue],
   );
 
+  const renderLoading = () => {
+    if (isLoadData) {
+      return <ActivityIndicator color={LightTheme.colorScheme.secondary} />;
+    }
+    return null;
+  };
+
   const renderError = React.useMemo(() => {
     if (!props.error) {
       return null;
@@ -49,7 +63,8 @@ export const ValuePicker: React.FC<ValuePickerProps> = (props) => {
         onPress={togglePicker}
         style={[styles.container, props.containerStyle]}>
         {prefix}
-        <TextView text={selectedItem?.value} />
+        <TextView style={styles.value} text={selectedItem?.value} />
+        {renderLoading()}
         <Icon name="chevron-down-outline" type="ionicon" />
       </TouchableOpacity>
       <ModalPicker
@@ -74,6 +89,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 8,
+  },
+  value: {
+    flex: 1,
+    marginLeft: 16,
   },
   error: {
     marginTop: 4,

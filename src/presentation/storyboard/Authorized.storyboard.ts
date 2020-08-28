@@ -1,8 +1,9 @@
 import {ParamListBase} from '@react-navigation/native';
+import {Distributor} from '@data';
 
 export interface AuthorizedStoryboardParamList extends ParamListBase {
   DistributorList: undefined;
-  ConsignmentAdding: undefined;
-  ConsignmentList: undefined;
+  ConsignmentAdding: {distributor: Distributor};
+  ConsignmentList: {distributor: Distributor};
   DistributorAdding: undefined;
 }

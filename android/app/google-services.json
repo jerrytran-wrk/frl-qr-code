@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "408238406639",
+    "firebase_url": "https://qrcode-bcc98.firebaseio.com",
+    "project_id": "qrcode-bcc98",
+    "storage_bucket": "qrcode-bcc98.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408238406639:android:c76c2fa08d8b3f3c11141a",
+        "android_client_info": {
+          "package_name": "com.vicophaqr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408238406639-g7gfd2b8duogk6nv5f786na3olkl7qin.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxlhMLDi4zdqERFDyz3IPoP-FkMeK-gmI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408238406639-g7gfd2b8duogk6nv5f786na3olkl7qin.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,7 +4,7 @@ import {RouteProp} from '@react-navigation/native';
 
 import {AuthorizedStoryboardParamList} from '@storyboards';
 
-export type DistributorAddingState = {};
+export type DistributorAddingState = {isAdding: boolean};
 export type DistributorAddingStoreApi = StoreActionApi<DistributorAddingState>;
 
 export type DistributorAddingNavigationProps = StackNavigationProp<

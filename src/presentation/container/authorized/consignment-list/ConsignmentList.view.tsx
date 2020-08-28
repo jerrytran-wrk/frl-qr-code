@@ -1,65 +1,78 @@
 import React from 'react';
-import {ListRenderItemInfo, View} from 'react-native';
+import {ListRenderItemInfo, View, InteractionManager} from 'react-native';
 // import from library section
 import {Header, Icon, SearchBar} from 'react-native-elements';
 
 // importing from alias section
 import {ErrorBoundary, TextView, ListView} from '@components';
 import {LightTheme} from '@resources';
+import {debounce} from 'lodash';
 
 // importing from local file
 import {useConsignmentList} from './ConsignmentList.store';
 import {ConsignmentListProps} from './ConsignmentList.type';
 import {ConsignmentListStyles} from './ConsignmentList.style';
 import {ConsignmentListItem} from './ListItem';
-import {Distributor} from '@data';
-
-const FAKE: Distributor[] = [
-  {
-    id: 1,
-    address: 'Chung cư Imperia - Huy Tưởng',
-    name: 'Nhà Phân phối 1',
-    image: 'Nhà Phân phối 1',
-    phone: '0123456789',
-  },
-  {
-    id: 2,
-    address: 'Chung cư Imperia - Huy Tưởng',
-    name: 'Nhà Phân phối 1',
-    image: 'Nhà Phân phối 1',
-    phone: '0123456789',
-  },
-  {
-    id: 3,
-    address: 'Chung cư Imperia - Huy Tưởng',
-    name: 'Nhà Phân phối 1',
-    image: 'Nhà Phân phối 1',
-    phone: '0123456789',
-  },
-];
+import {Distributor, Consignment} from '@data';
+import {useFocusEffect} from '@react-navigation/native';
 
 export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
   const {colorScheme} = LightTheme;
   const [state, action] = useConsignmentList();
-  const {navigation} = props;
+  const {navigation, route} = props;
+  useFocusEffect(
+    React.useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        if (navigation.isFocused()) {
+          action.refresh('', route.params.distributor.id);
+        }
+      });
 
-  const title = React.useMemo(() => 'Lô Hàng', []);
+      return () => task.cancel();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
+
+  const title = React.useMemo(() => route.params.distributor.name, [route]);
+
+  const [keyword, setKeyword] = React.useState('');
 
   const goBack = React.useCallback(() => {
     navigation.pop();
   }, [navigation]);
 
+  const onRefresh = React.useCallback(() => {
+    action.refresh(keyword, route.params.distributor.id);
+  }, [action, keyword, route]);
+
+  const search = React.useCallback(
+    debounce((value: string) => {
+      action.refresh(value, route.params.distributor.id);
+    }, 800),
+    [route],
+  );
+
+  const onSearchBarChanged = React.useCallback(
+    (value: string) => {
+      setKeyword(value);
+      search(value);
+    },
+    [search],
+  );
+
   const goToConsignmentAdding = React.useCallback(() => {
-    navigation.navigate('ConsignmentAdding');
-  }, [navigation]);
+    navigation.navigate('ConsignmentAdding', {
+      distributor: route.params.distributor,
+    });
+  }, [navigation, route]);
 
   const keyExtractor = React.useCallback(
     (item: Distributor) => item.id.toString(),
     [],
   );
   const renderItem = React.useCallback(
-    ({item}: ListRenderItemInfo<Distributor>) => {
-      return <ConsignmentListItem distributor={item} />;
+    ({item}: ListRenderItemInfo<Consignment>) => {
+      return <ConsignmentListItem consignment={item} />;
     },
     [],
   );
@@ -88,9 +101,16 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
             />
           }
         />
-        <SearchBar platform="ios" showCancel={false} />
+        <SearchBar
+          onChangeText={onSearchBarChanged}
+          platform="ios"
+          showCancel={false}
+          value={keyword}
+        />
         <ListView
-          data={FAKE}
+          refreshing={state.isLoading}
+          onRefresh={onRefresh}
+          data={state.consignments}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
         />

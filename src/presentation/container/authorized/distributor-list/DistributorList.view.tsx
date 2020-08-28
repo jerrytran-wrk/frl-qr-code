@@ -1,62 +1,72 @@
 import React from 'react';
-import {ListRenderItemInfo, View} from 'react-native';
+import {ListRenderItemInfo, View, InteractionManager} from 'react-native';
 // import from library section
 import {Header, Icon, SearchBar} from 'react-native-elements';
-
+import {useFocusEffect} from '@react-navigation/native';
+import {debounce} from 'lodash';
 // importing from alias section
 import {ErrorBoundary, TextView, ListView} from '@components';
 import {LightTheme} from '@resources';
-
+import {Distributor} from '@data';
 // importing from local file
 import {useDistributorList} from './DistributorList.store';
 import {DistributorListProps} from './DistributorList.type';
 import {DistributorListStyles} from './DistributorList.style';
 import {DistributorListItem} from './ListItem';
-import {Distributor} from '@data';
-
-const FAKE: Distributor[] = [
-  {
-    id: 1,
-    address: 'Chung cư Imperia - Huy Tưởng',
-    name: 'Nhà Phân phối 1',
-    image: 'Nhà Phân phối 1',
-    phone: '0123456789',
-  },
-  {
-    id: 2,
-    address: 'Chung cư Imperia - Huy Tưởng',
-    name: 'Nhà Phân phối 1',
-    image: 'Nhà Phân phối 1',
-    phone: '0123456789',
-  },
-  {
-    id: 3,
-    address: 'Chung cư Imperia - Huy Tưởng',
-    name: 'Nhà Phân phối 1',
-    image: 'Nhà Phân phối 1',
-    phone: '0123456789',
-  },
-];
 
 export const DistributorList: React.FC<DistributorListProps> = (props) => {
   const {colorScheme} = LightTheme;
   const [state, action] = useDistributorList();
   const {navigation} = props;
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        if (navigation.isFocused()) {
+          action.refresh('');
+        }
+      });
+
+      return () => task.cancel();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
+
   const title = React.useMemo(() => 'Nhà phân phối', []);
+
+  const [keyword, setKeyword] = React.useState('');
+
+  const onRefresh = React.useCallback(() => {
+    action.refresh(keyword);
+  }, [action, keyword]);
+
+  const search = React.useCallback(
+    debounce((value: string) => {
+      action.refresh(value);
+    }, 800),
+    [],
+  );
+
+  const onSearchBarChanged = React.useCallback(
+    (value: string) => {
+      setKeyword(value);
+      search(value);
+    },
+    [search],
+  );
 
   const onAddButtonPress = React.useCallback(() => {
     navigation.navigate('DistributorAdding');
   }, [navigation]);
 
-  const onItemPress = React.useCallback(() => {
-    navigation.navigate('ConsignmentList');
-  }, [navigation]);
-
-  const keyExtractor = React.useCallback(
-    (item: Distributor) => item.id.toString(),
-    [],
+  const onItemPress = React.useCallback(
+    (distributor: Distributor) => {
+      navigation.navigate('ConsignmentList', {distributor});
+    },
+    [navigation],
   );
+
+  const keyExtractor = React.useCallback((item: Distributor) => item.id, []);
   const renderItem = React.useCallback(
     ({item}: ListRenderItemInfo<Distributor>) => {
       return <DistributorListItem distributor={item} onPress={onItemPress} />;
@@ -85,9 +95,16 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
             />
           }
         />
-        <SearchBar platform="ios" showCancel={false} />
+        <SearchBar
+          onChangeText={onSearchBarChanged}
+          value={keyword}
+          platform="ios"
+          showCancel={false}
+        />
         <ListView
-          data={FAKE}
+          onRefresh={onRefresh}
+          refreshing={state.isLoading}
+          data={state.distributors}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
         />

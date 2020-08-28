@@ -6,36 +6,40 @@ import {Avatar, Badge, Icon} from 'react-native-elements';
 import Swipeable from 'react-native-swipeable';
 
 import {TextView} from '@components';
-import {Distributor} from '@data';
+import {Consignment} from '@data';
 import {LightTheme} from '@resources';
 
 export type ConsignmentListItemProps = {
-  distributor: Distributor;
+  consignment: Consignment;
 };
 
 export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
   props,
 ) => {
-  const {distributor} = props;
+  const {consignment} = props;
   const renderAvatar = React.useMemo(() => {
     return (
       <Avatar
         size="medium"
-        title={distributor?.name}
-        source={{uri: distributor?.image}}
+        title={consignment?.name}
+        source={{uri: 'consignment?.image'}}
         rounded
       />
     );
-  }, [distributor]);
+  }, [consignment]);
 
   const renderInformation = React.useMemo(() => {
     return (
       <View style={styles.infoContainer}>
-        <TextView style={styles.title} text={distributor.name} />
-        <TextView style={styles.description} text={distributor.address} />
+        <TextView style={styles.title} text={consignment.name} />
+        <TextView style={styles.description} text={consignment.shipper} />
+        <TextView
+          style={styles.description}
+          text={consignment.createdDate.toString()}
+        />
       </View>
     );
-  }, [distributor]);
+  }, [consignment]);
 
   return (
     <Swipeable

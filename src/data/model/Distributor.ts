@@ -1,7 +1,8 @@
 export interface Distributor {
-  id: number;
+  id: string;
   name: string;
   address: string;
   phone: string;
-  image: string;
+  image?: string;
+  createdAt: Date;
 }

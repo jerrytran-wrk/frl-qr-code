@@ -3,7 +3,13 @@ import {View} from 'react-native';
 // import from library section
 import {Icon, Header} from 'react-native-elements';
 // importing from alias section
-import {ErrorBoundary, TextField, RoundedButton, TextView} from '@components';
+import {
+  ErrorBoundary,
+  TextField,
+  RoundedButton,
+  TextView,
+  FullScreenLoadingIndicator,
+} from '@components';
 import {LightTheme} from '@resources';
 // importing from local file
 import {useDistributorAdding} from './DistributorAdding.store';
@@ -14,14 +20,23 @@ export const DistributorAdding: React.FC<DistributorAddingProps> = (props) => {
   const {colorScheme} = LightTheme;
   const [state, action] = useDistributorAdding();
   const {navigation} = props;
+
   const title = React.useMemo(() => 'Thêm nhà phân phối', []);
   const namePlaceholder = React.useMemo(() => 'Tên nhà Phân phối', []);
   const phonePlaceholder = React.useMemo(() => 'Số điện thoại', []);
   const addressPlaceholder = React.useMemo(() => 'Địa chỉ', []);
 
+  const [name, setName] = React.useState('');
+  const [address, setAddress] = React.useState('');
+  const [phone, setPhone] = React.useState('');
+
   const goBack = React.useCallback(() => {
     navigation.pop();
   }, [navigation]);
+
+  const onSaveButtonPress = React.useCallback(() => {
+    action.add(name, address, phone);
+  }, [action, address, name, phone]);
 
   const renderForm = React.useCallback(() => {
     return (
@@ -32,6 +47,7 @@ export const DistributorAdding: React.FC<DistributorAddingProps> = (props) => {
             prefix={<Icon name="albums-outline" type="ionicon" />}
             inputProps={{
               placeholder: namePlaceholder,
+              onChangeText: setName,
             }}
           />
           <TextField
@@ -39,6 +55,7 @@ export const DistributorAdding: React.FC<DistributorAddingProps> = (props) => {
             prefix={<Icon name="reader-outline" type="ionicon" />}
             inputProps={{
               placeholder: addressPlaceholder,
+              onChangeText: setAddress,
             }}
           />
           <TextField
@@ -47,19 +64,27 @@ export const DistributorAdding: React.FC<DistributorAddingProps> = (props) => {
             inputProps={{
               placeholder: phonePlaceholder,
               keyboardType: 'phone-pad',
+              onChangeText: setPhone,
             }}
           />
         </View>
         <RoundedButton
           containerStyle={DistributorAddingStyles.saveButton}
           title="Lưu lại"
+          onPress={onSaveButtonPress}
         />
       </>
     );
-  }, [addressPlaceholder, namePlaceholder, phonePlaceholder]);
+  }, [
+    addressPlaceholder,
+    namePlaceholder,
+    onSaveButtonPress,
+    phonePlaceholder,
+  ]);
 
   return (
     <ErrorBoundary>
+      <FullScreenLoadingIndicator visible={state.isAdding} />
       <Header
         statusBarProps={{
           translucent: true,

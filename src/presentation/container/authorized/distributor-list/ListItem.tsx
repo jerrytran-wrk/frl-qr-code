@@ -8,22 +8,34 @@ import Swipeable from 'react-native-swipeable';
 import {TextView} from '@components';
 import {Distributor} from '@data';
 import {LightTheme} from '@resources';
+import {useDistributorList} from './DistributorList.store';
 
 export type DistributorListItemProps = {
   distributor: Distributor;
-  onPress?: () => void;
+  onPress?: (distributor: Distributor) => void;
 };
 
 export const DistributorListItem: React.FC<DistributorListItemProps> = (
   props,
 ) => {
-  const {distributor} = props;
+  const [state, action] = useDistributorList();
+  const {distributor, onPress} = props;
+
+  const onItemPress = React.useCallback(() => {
+    onPress && onPress(distributor);
+  }, [onPress, distributor]);
+
+  const onTrashButtonPress = React.useCallback(() => {
+    action.remove(distributor.id);
+    action.refresh(state.keyword);
+  }, [action, distributor, state.keyword]);
+
   const renderAvatar = React.useMemo(() => {
     return (
       <Avatar
         size="medium"
-        title={distributor?.name}
-        source={{uri: distributor?.image}}
+        title={distributor?.name.substr(0, 2)}
+        source={{uri: 'distributor?.image'}}
         rounded
       />
     );
@@ -47,10 +59,11 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
             name="trash-outline"
             type="ionicon"
             color={LightTheme.colorScheme.onSecondary}
+            onPress={onTrashButtonPress}
           />
         </Pressable>,
       ]}>
-      <Pressable onPress={props.onPress} style={[styles.container]}>
+      <Pressable onPress={onItemPress} style={[styles.container]}>
         <View style={styles.content}>
           {renderAvatar}
           {renderInformation}

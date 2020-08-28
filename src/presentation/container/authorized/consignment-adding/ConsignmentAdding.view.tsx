@@ -1,7 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
 // import from library section
-import QRCode from 'react-native-qrcode-svg';
 import {Header, Icon} from 'react-native-elements';
 
 // importing from alias section
@@ -12,6 +11,7 @@ import {
   RoundedButton,
   DatePicker,
   ValuePicker,
+  FullScreenLoadingIndicator,
 } from '@components';
 // importing from local file
 import {useConsignmentAdding} from './ConsignmentAdding.store';
@@ -22,10 +22,32 @@ import {LightTheme} from '@resources';
 export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
   const {colorScheme} = LightTheme;
   const [state, action] = useConsignmentAdding();
-  const {navigation} = props;
+  const {navigation, route} = props;
+
+  React.useEffect(() => {
+    action.loadDistributor();
+    return () => action.reset();
+  }, [action]);
+
   const title = React.useMemo(() => 'Thêm Lô Hàng', []);
   const shipperPlaceholder = React.useMemo(() => 'Người giao hàng', []);
   const consignmentPlaceholder = React.useMemo(() => 'Lô Hàng', []);
+
+  const [distributorId, setDistributorId] = React.useState(
+    route.params.distributor.id,
+  );
+  const [name, setName] = React.useState('');
+  const [shipper, setShipper] = React.useState('');
+  const [createdDate, setCreatedDate] = React.useState(new Date());
+
+  const onSaveButtonPress = React.useCallback(() => {
+    action.add({
+      distributorId,
+      name,
+      shipper,
+      createdDate,
+    });
+  }, [action, createdDate, distributorId, name, shipper]);
 
   const goBack = React.useCallback(() => {
     navigation.pop();
@@ -38,14 +60,18 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
           <ValuePicker
             containerStyle={ConsignmentAddingStyles.formComponentDistance}
             prefix={<Icon name="albums-outline" type="ionicon" />}
-            data={[]}
-            // selectedId={}
+            data={state.distributors}
+            title="Nhà phân phối"
+            onChangeValue={setDistributorId}
+            selectedId={distributorId}
+            isLoadData={state.isLoadDistributor}
           />
           <TextField
             containerStyle={ConsignmentAddingStyles.formComponentDistance}
             prefix={<Icon name="cube-outline" type="ionicon" />}
             inputProps={{
               placeholder: consignmentPlaceholder,
+              onChangeText: setName,
             }}
           />
           <TextField
@@ -53,22 +79,32 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
             prefix={<Icon name="shirt-outline" type="ionicon" />}
             inputProps={{
               placeholder: shipperPlaceholder,
+              onChangeText: setShipper,
             }}
           />
           <DatePicker
             containerStyle={ConsignmentAddingStyles.formComponentDistance}
+            onChangeValue={setCreatedDate}
           />
         </View>
         <RoundedButton
           containerStyle={ConsignmentAddingStyles.saveButton}
           title="Lưu lại"
+          onPress={onSaveButtonPress}
         />
       </>
     );
-  }, [consignmentPlaceholder, shipperPlaceholder]);
+  }, [
+    state,
+    distributorId,
+    consignmentPlaceholder,
+    shipperPlaceholder,
+    onSaveButtonPress,
+  ]);
 
   return (
     <ErrorBoundary>
+      <FullScreenLoadingIndicator visible={state.isAdding} />
       <Header
         statusBarProps={{
           translucent: true,

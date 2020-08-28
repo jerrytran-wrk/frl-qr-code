@@ -3,7 +3,7 @@ import {DistributorAddingActions} from './DistributorAdding.action';
 import {DistributorAddingState} from './DistributorAdding.type';
 
 export const INITIAL_STATE: DistributorAddingState = {
-  status: 'INIT',
+  isAdding: false,
 };
 
 export const DistributorAddingStore = createStore<
