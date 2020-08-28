@@ -5,6 +5,7 @@ import firestore, {
 import {Either} from 'tsmonad';
 import {Exception} from '@core';
 import {Consignment, PaginationResult} from '../model';
+import {DistributorDataSource} from './DistributorDataSource';
 
 export interface ConsignmentDataSource {
   add(consignment: Consignment): Promise<Either<Exception, Consignment>>;
@@ -17,14 +18,17 @@ export interface ConsignmentDataSource {
     keyword: string,
     distributorId: string,
   ): Promise<Either<Exception, PaginationResult<Consignment>>>;
+
+  get(id: string): Promise<Either<Exception, Consignment>>;
 }
 export class FirestoreConsignmentDataSource implements ConsignmentDataSource {
   static readonly COLLECTION = 'Consignment';
 
   firestore: FirebaseFirestoreTypes.Module;
-  constructor() {
+  constructor(private readonly distributorDataSource?: DistributorDataSource) {
     this.firestore = firestore();
   }
+
   async add(consignment: Consignment): Promise<Either<Exception, Consignment>> {
     try {
       await this.firestore
@@ -78,14 +82,8 @@ export class FirestoreConsignmentDataSource implements ConsignmentDataSource {
       snapshot.forEach((doc) => {
         const data = doc.data();
         if (`${data.name}`.toLowerCase().includes(keyword.toLowerCase())) {
-          consignments.push({
-            id: doc.id,
-            name: data.name,
-            createdDate: new Date(data.createdDate),
-            createdAt: new Date(data.createdAt),
-            shipper: data.shipper,
-            distributorId: data.distributorId,
-          });
+          const consignment = this.documentToConsignment(doc);
+          consignments.push(consignment);
         }
       });
       return Either.right<Exception, PaginationResult<Consignment>>({
@@ -96,5 +94,38 @@ export class FirestoreConsignmentDataSource implements ConsignmentDataSource {
     } catch (error) {
       return Either.left(new Exception());
     }
+  }
+  async get(id: string): Promise<Either<Exception, Consignment>> {
+    const document = await this.firestore
+      .collection(FirestoreConsignmentDataSource.COLLECTION)
+      .doc(id)
+      .get();
+    const consignment = this.documentToConsignment(document);
+
+    const result = await this.distributorDataSource?.get(
+      consignment.distributorId,
+    );
+
+    result?.do({
+      right: (distributor) => (consignment.distributor = distributor),
+    });
+
+    return Either.right(consignment);
+  }
+
+  private documentToConsignment(
+    doc: FirebaseFirestoreTypes.DocumentSnapshot,
+  ): Consignment {
+    const data = doc.data();
+    const consignment: Consignment = {
+      id: doc.id,
+      name: data!.name,
+      createdDate: new Date(data!.createdDate),
+      createdAt: new Date(data!.createdAt),
+      shipper: data!.shipper,
+      distributorId: data!.distributorId,
+    };
+
+    return consignment;
   }
 }

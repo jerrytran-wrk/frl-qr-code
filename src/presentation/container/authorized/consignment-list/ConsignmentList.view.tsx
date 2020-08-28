@@ -41,6 +41,13 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
     navigation.pop();
   }, [navigation]);
 
+  const onItemPress = React.useCallback(
+    (consignment: Consignment) => {
+      navigation.navigate('ConsignmentDetail', {consignmentId: consignment.id});
+    },
+    [navigation],
+  );
+
   const onRefresh = React.useCallback(() => {
     action.refresh(keyword, route.params.distributor.id);
   }, [action, keyword, route]);
@@ -72,9 +79,9 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
   );
   const renderItem = React.useCallback(
     ({item}: ListRenderItemInfo<Consignment>) => {
-      return <ConsignmentListItem consignment={item} />;
+      return <ConsignmentListItem onPress={onItemPress} consignment={item} />;
     },
-    [],
+    [onItemPress],
   );
 
   return (

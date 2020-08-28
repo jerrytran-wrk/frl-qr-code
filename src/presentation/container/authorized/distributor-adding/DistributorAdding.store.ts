@@ -1,10 +1,7 @@
 import {createStore, createHook} from 'react-sweet-state';
 import {DistributorAddingActions} from './DistributorAdding.action';
 import {DistributorAddingState} from './DistributorAdding.type';
-
-export const INITIAL_STATE: DistributorAddingState = {
-  isAdding: false,
-};
+import {INITIAL_STATE} from './constants';
 
 export const DistributorAddingStore = createStore<
   DistributorAddingState,

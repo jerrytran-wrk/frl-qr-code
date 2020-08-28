@@ -1,5 +1,5 @@
 import {DistributorListStoreApi} from './DistributorList.type';
-import {INITIAL_STATE} from './DistributorList.store';
+import {INITIAL_STATE} from './constants';
 import {FirestoreDistributorDataSource} from '@data';
 
 export const DistributorListActions = {

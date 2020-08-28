@@ -15,6 +15,8 @@ export interface DistributorDataSource {
   list(
     keyword: string,
   ): Promise<Either<Exception, PaginationResult<Distributor>>>;
+
+  get(id: string): Promise<Either<Exception, Distributor>>;
 }
 
 // @singleton()
@@ -25,6 +27,7 @@ export class FirestoreDistributorDataSource implements DistributorDataSource {
   constructor() {
     this.firestore = firestore();
   }
+
   async add(distributor: Distributor): Promise<Either<Exception, Distributor>> {
     try {
       await this.firestore
@@ -66,19 +69,14 @@ export class FirestoreDistributorDataSource implements DistributorDataSource {
     try {
       const snapshot = await this.firestore
         .collection(FirestoreDistributorDataSource.COLLECTION)
-        .orderBy('createdAt')
+        .orderBy('createdAt', 'desc')
         .get();
       const distributors: Distributor[] = [];
       snapshot.forEach((doc) => {
         const data = doc.data();
         if (`${data.name}`.toLowerCase().includes(keyword.toLowerCase())) {
-          distributors.push({
-            id: doc.id,
-            name: data.name,
-            address: data.address,
-            phone: data.phone,
-            createdAt: new Date(data.createdAt),
-          });
+          const distributor = this.documentToDistributor(doc);
+          distributors.push(distributor);
         }
       });
       return Either.right<Exception, PaginationResult<Distributor>>({
@@ -89,5 +87,29 @@ export class FirestoreDistributorDataSource implements DistributorDataSource {
     } catch (error) {
       return Either.left(new Exception());
     }
+  }
+
+  async get(id: string): Promise<Either<Exception, Distributor>> {
+    const document = await this.firestore
+      .collection(FirestoreDistributorDataSource.COLLECTION)
+      .doc(id)
+      .get();
+    const distributor = this.documentToDistributor(document);
+    return Either.right(distributor);
+  }
+
+  private documentToDistributor(
+    doc: FirebaseFirestoreTypes.DocumentSnapshot,
+  ): Distributor {
+    const data = doc.data();
+    const distributor: Distributor = {
+      id: doc.id,
+      name: data!.name,
+      address: data!.address,
+      phone: data!.phone,
+      createdAt: new Date(data!.createdAt),
+    };
+
+    return distributor;
   }
 }

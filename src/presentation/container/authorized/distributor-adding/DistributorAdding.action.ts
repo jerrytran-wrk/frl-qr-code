@@ -1,6 +1,6 @@
 import uuid from 'react-native-uuid';
 import {DistributorAddingStoreApi} from './DistributorAdding.type';
-import {INITIAL_STATE} from './DistributorAdding.store';
+import {INITIAL_STATE} from './constants';
 import {FirestoreDistributorDataSource} from '@data';
 
 export const DistributorAddingActions = {

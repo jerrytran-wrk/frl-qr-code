@@ -1,12 +1,7 @@
 import {createStore, createHook} from 'react-sweet-state';
 import {DistributorListActions} from './DistributorList.action';
 import {DistributorListState} from './DistributorList.type';
-
-export const INITIAL_STATE: DistributorListState = {
-  distributors: [],
-  isLoading: false,
-  keyword: '',
-};
+import {INITIAL_STATE} from './constants';
 
 export const DistributorListStore = createStore<
   DistributorListState,

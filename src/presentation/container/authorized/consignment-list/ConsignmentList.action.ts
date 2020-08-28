@@ -1,5 +1,5 @@
 import {ConsignmentListStoreApi} from './ConsignmentList.type';
-import {INITIAL_STATE} from './ConsignmentList.store';
+import {INITIAL_STATE} from './constants';
 import {FirestoreConsignmentDataSource} from '@data';
 
 export const ConsignmentListActions = {

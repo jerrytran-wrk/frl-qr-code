@@ -11,12 +11,18 @@ import {LightTheme} from '@resources';
 
 export type ConsignmentListItemProps = {
   consignment: Consignment;
+  onPress: (consignment: Consignment) => void;
 };
 
 export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
   props,
 ) => {
-  const {consignment} = props;
+  const {consignment, onPress} = props;
+
+  const onItemPress = React.useCallback(() => {
+    onPress(consignment);
+  }, [consignment, onPress]);
+
   const renderAvatar = React.useMemo(() => {
     return (
       <Avatar
@@ -53,14 +59,14 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
           />
         </Pressable>,
       ]}>
-      <View style={[styles.container]}>
+      <Pressable onPress={onItemPress} style={[styles.container]}>
         <View style={styles.content}>
           {renderAvatar}
           {renderInformation}
           <Badge value="3" badgeStyle={styles.badgeStyle} />
           <Icon name="chevron-forward-outline" type="ionicon" />
         </View>
-      </View>
+      </Pressable>
     </Swipeable>
   );
 };
