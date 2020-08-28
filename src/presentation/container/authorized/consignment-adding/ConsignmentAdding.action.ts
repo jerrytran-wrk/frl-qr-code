@@ -17,10 +17,10 @@ export const ConsignmentAddingActions = {
   },
   add: (data: ConsignmentAddingData) => async ({
     setState,
-  }: ConsignmentAddingStoreApi) => {
+  }: ConsignmentAddingStoreApi): Promise<string | null> => {
     setState({isAdding: true});
     const dataSource = new FirestoreConsignmentDataSource();
-    await dataSource.add({
+    const result = await dataSource.add({
       id: uuid.v4(),
       name: data.name,
       distributorId: data.distributorId,
@@ -29,6 +29,7 @@ export const ConsignmentAddingActions = {
       shipper: data.shipper,
     });
     setState({isAdding: false});
+    return result.caseOf({right: (r) => r.id, left: () => null});
   },
   loadDistributor: () => async ({setState}: ConsignmentAddingStoreApi) => {
     setState({isLoadDistributor: true});

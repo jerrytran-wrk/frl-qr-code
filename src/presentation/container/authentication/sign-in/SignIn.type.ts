@@ -4,7 +4,7 @@ import {RouteProp} from '@react-navigation/native';
 
 import {AuthenticationStoryboardParamList} from '@storyboards';
 
-export type SignInState = {};
+export type SignInState = {isSigning: boolean};
 export type SignInStoreApi = StoreActionApi<SignInState>;
 
 export type SignInNavigationProps = StackNavigationProp<

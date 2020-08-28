@@ -1,6 +1,5 @@
-import {ParamListBase} from '@react-navigation/native';
-
-export interface AuthenticationStoryboardParamList extends ParamListBase {
+export type AuthenticationStoryboardParamList = {
   SignIn: {userName?: string};
-  SignUp: {userName?: string};
-}
+  ScanQR: undefined;
+  ConsignmentDetail: {consignmentId: string};
+};

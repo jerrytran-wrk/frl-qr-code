@@ -5,7 +5,7 @@ import {Header, Icon, SearchBar} from 'react-native-elements';
 import {useFocusEffect} from '@react-navigation/native';
 import {debounce} from 'lodash';
 // importing from alias section
-import {ErrorBoundary, TextView, ListView} from '@components';
+import {ErrorBoundary, TextView, ListView, FloatingButton} from '@components';
 import {LightTheme} from '@resources';
 import {Distributor} from '@data';
 // importing from local file
@@ -66,6 +66,10 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
     [navigation],
   );
 
+  const onScanBarCodeButtonPress = React.useCallback(() => {
+    navigation.navigate('ScanQR');
+  }, [navigation]);
+
   const keyExtractor = React.useCallback((item: Distributor) => item.id, []);
   const renderItem = React.useCallback(
     ({item}: ListRenderItemInfo<Distributor>) => {
@@ -109,6 +113,13 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
           keyExtractor={keyExtractor}
         />
       </View>
+      <FloatingButton onPress={onScanBarCodeButtonPress}>
+        <Icon
+          name="qr-code-outline"
+          type="ionicon"
+          color={colorScheme.onSecondary}
+        />
+      </FloatingButton>
     </ErrorBoundary>
   );
 };

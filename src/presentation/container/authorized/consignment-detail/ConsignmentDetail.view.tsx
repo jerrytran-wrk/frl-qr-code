@@ -4,12 +4,13 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
+  PermissionsAndroid,
 } from 'react-native';
 // import from library section
 import {useFocusEffect} from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg';
 import {Icon, Header} from 'react-native-elements';
-
+import Svg from 'react-native-svg';
 // importing from alias section
 import {ErrorBoundary, TextView, KeyValueText} from '@components';
 
@@ -23,6 +24,10 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
   const {colorScheme} = LightTheme;
   const [state, action] = useConsignmentDetail();
   const {navigation, route} = props;
+
+  React.useEffect(() => {
+    return action.reset;
+  }, [action.reset]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,17 +45,44 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
 
   const title = React.useMemo(() => state.consignment?.name, [state]);
 
+  const qrCodeRef = React.useRef<Svg>(null);
+
   const goBack = React.useCallback(() => {
     navigation.pop();
   }, [navigation]);
 
-  const onSaveButtonPress = React.useCallback(() => {
-    navigation.pop();
-  }, [navigation]);
+  const hasAndroidPermission = React.useCallback(async () => {
+    const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
 
-  const onShareButtonPress = React.useCallback(() => {
-    navigation.pop();
-  }, [navigation]);
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+  }, []);
+
+  const saveQR = React.useCallback(() => {
+    return new Promise(async (resolve, reject) => {
+      const granted = await hasAndroidPermission();
+      if (!granted) {
+        reject();
+      }
+      //@ts-ignore
+      qrCodeRef.current!.toDataURL(async (data: string) => {
+        await action.save(data, state.consignment!);
+        resolve();
+      });
+    });
+  }, [action, hasAndroidPermission, state]);
+
+  const onSaveButtonPress = React.useCallback(() => saveQR(), [saveQR]);
+
+  const onShareButtonPress = React.useCallback(async () => {
+    await saveQR();
+    action.share(state.consignment!);
+  }, [action, saveQR, state.consignment]);
 
   const renderContent = () => {
     if (state.isLoading) {
@@ -125,6 +157,8 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
       />
       <View style={ConsignmentDetailStyles.qrCodeContainer}>
         <QRCode
+          //@ts-ignore
+          getRef={qrCodeRef}
           value={route.params.consignmentId}
           size={Dimensions.get('window').width * 0.6}
         />

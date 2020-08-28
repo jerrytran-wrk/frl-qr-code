@@ -4,7 +4,7 @@ import {ListRenderItemInfo, View, InteractionManager} from 'react-native';
 import {Header, Icon, SearchBar} from 'react-native-elements';
 
 // importing from alias section
-import {ErrorBoundary, TextView, ListView} from '@components';
+import {ErrorBoundary, TextView, ListView, FloatingButton} from '@components';
 import {LightTheme} from '@resources';
 import {debounce} from 'lodash';
 
@@ -73,6 +73,10 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
     });
   }, [navigation, route]);
 
+  const onScanBarCodeButtonPress = React.useCallback(() => {
+    navigation.navigate('ScanQR');
+  }, [navigation]);
+
   const keyExtractor = React.useCallback(
     (item: Distributor) => item.id.toString(),
     [],
@@ -122,6 +126,13 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
           keyExtractor={keyExtractor}
         />
       </View>
+      <FloatingButton onPress={onScanBarCodeButtonPress}>
+        <Icon
+          name="qr-code-outline"
+          type="ionicon"
+          color={colorScheme.onSecondary}
+        />
+      </FloatingButton>
     </ErrorBoundary>
   );
 };

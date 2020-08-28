@@ -1,16 +1,20 @@
 import * as React from 'react';
 
-import {createStackNavigator} from '@react-navigation/stack';
+import {enableScreens} from 'react-native-screens';
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 
 import {AuthenticationStoryboardParamList} from '@storyboards';
-import {SignIn} from '@containers';
+import {SignIn, ScanQR, ConsignmentDetail} from '@containers';
 
-const Stack = createStackNavigator<AuthenticationStoryboardParamList>();
+enableScreens();
+const Stack = createNativeStackNavigator<AuthenticationStoryboardParamList>();
 
 export const AuthenticationNavigator: React.FC = () => {
   return (
-    <Stack.Navigator headerMode="none">
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="SignIn" component={SignIn} />
+      <Stack.Screen name="ScanQR" component={ScanQR} />
+      <Stack.Screen name="ConsignmentDetail" component={ConsignmentDetail} />
     </Stack.Navigator>
   );
 };

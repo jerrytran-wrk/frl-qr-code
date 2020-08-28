@@ -8,6 +8,8 @@ import {AuthorizedStoryboardParamList} from '@storyboards';
 export type ConsignmentDetailState = {
   isLoading: boolean;
   consignment?: Consignment;
+  saveQRError?: string;
+  shareQRError?: string;
 };
 export type ConsignmentDetailStoreApi = StoreActionApi<ConsignmentDetailState>;
 

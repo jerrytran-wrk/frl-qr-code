@@ -1,5 +1,5 @@
 import { {{$name}}StoreApi} from './{{$name}}.type';
-import {INITIAL_STATE} from './{{$name}}.store';
+import {INITIAL_STATE} from './constants';
 
 export const {{$name}}Actions = {
   reset: () => async ({setState}: {{$name}}StoreApi) => {

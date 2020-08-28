@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, ScrollView} from 'react-native';
 // import from library section
 import {Header, Icon} from 'react-native-elements';
 
@@ -40,14 +40,17 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
   const [shipper, setShipper] = React.useState('');
   const [createdDate, setCreatedDate] = React.useState(new Date());
 
-  const onSaveButtonPress = React.useCallback(() => {
-    action.add({
+  const onSaveButtonPress = React.useCallback(async () => {
+    const addedId = await action.add({
       distributorId,
       name,
       shipper,
       createdDate,
     });
-  }, [action, createdDate, distributorId, name, shipper]);
+    if (addedId) {
+      navigation.navigate('ConsignmentDetail', {consignmentId: addedId});
+    }
+  }, [action, createdDate, distributorId, name, navigation, shipper]);
 
   const goBack = React.useCallback(() => {
     navigation.pop();
@@ -120,7 +123,9 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
           <Icon name="arrow-back-outline" type="ionicon" onPress={goBack} />
         }
       />
-      <View style={ConsignmentAddingStyles.container}>{renderForm()}</View>
+      <ScrollView contentContainerStyle={ConsignmentAddingStyles.container}>
+        {renderForm()}
+      </ScrollView>
     </ErrorBoundary>
   );
 };
