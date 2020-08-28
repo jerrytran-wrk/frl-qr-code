@@ -25,8 +25,8 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
     onPress && onPress(distributor);
   }, [onPress, distributor]);
 
-  const onTrashButtonPress = React.useCallback(() => {
-    action.remove(distributor.id);
+  const onTrashButtonPress = React.useCallback(async () => {
+    await action.remove(distributor.id);
     action.refresh(state.keyword);
   }, [action, distributor, state.keyword]);
 

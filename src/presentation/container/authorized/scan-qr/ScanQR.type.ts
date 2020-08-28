@@ -2,14 +2,22 @@ import {StoreActionApi} from 'react-sweet-state';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 
-import {ParamsType} from '@storyboards';
+import {AuthorizedStoryboardParamList} from '@storyboards';
 
-export type ScanQRState = {};
+export type ScanQRState = {
+  isValidatingCode: boolean;
+};
 export type ScanQRStoreApi = StoreActionApi<ScanQRState>;
 
-export type ScanQRNavigationProps = StackNavigationProp<ParamsType, 'ScanQR'>;
+export type ScanQRNavigationProps = StackNavigationProp<
+  AuthorizedStoryboardParamList,
+  'ScanQR'
+>;
 
-export type ScanQRRouteProp = RouteProp<ParamsType, 'ScanQR'>;
+export type ScanQRRouteProp = RouteProp<
+  AuthorizedStoryboardParamList,
+  'ScanQR'
+>;
 
 export type ScanQRProps = {
   navigation: ScanQRNavigationProps;

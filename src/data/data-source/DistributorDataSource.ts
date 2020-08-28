@@ -90,12 +90,16 @@ export class FirestoreDistributorDataSource implements DistributorDataSource {
   }
 
   async get(id: string): Promise<Either<Exception, Distributor>> {
-    const document = await this.firestore
-      .collection(FirestoreDistributorDataSource.COLLECTION)
-      .doc(id)
-      .get();
-    const distributor = this.documentToDistributor(document);
-    return Either.right(distributor);
+    try {
+      const document = await this.firestore
+        .collection(FirestoreDistributorDataSource.COLLECTION)
+        .doc(id)
+        .get();
+      const distributor = this.documentToDistributor(document);
+      return Either.right(distributor);
+    } catch (error) {
+      return Either.left(new Exception());
+    }
   }
 
   private documentToDistributor(

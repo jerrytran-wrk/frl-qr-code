@@ -48,6 +48,14 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
     [navigation],
   );
 
+  const onRemoveItem = React.useCallback(
+    async (consignment: Consignment) => {
+      await action.remove(consignment.id);
+      action.refresh(keyword, route.params.distributor.id);
+    },
+    [action, keyword, route.params.distributor.id],
+  );
+
   const onRefresh = React.useCallback(() => {
     action.refresh(keyword, route.params.distributor.id);
   }, [action, keyword, route]);
@@ -83,9 +91,15 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
   );
   const renderItem = React.useCallback(
     ({item}: ListRenderItemInfo<Consignment>) => {
-      return <ConsignmentListItem onPress={onItemPress} consignment={item} />;
+      return (
+        <ConsignmentListItem
+          onRemove={onRemoveItem}
+          onPress={onItemPress}
+          consignment={item}
+        />
+      );
     },
-    [onItemPress],
+    [onItemPress, onRemoveItem],
   );
 
   return (

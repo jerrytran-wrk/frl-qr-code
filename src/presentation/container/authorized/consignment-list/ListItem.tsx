@@ -12,12 +12,17 @@ import {LightTheme} from '@resources';
 export type ConsignmentListItemProps = {
   consignment: Consignment;
   onPress: (consignment: Consignment) => void;
+  onRemove: (consignment: Consignment) => void;
 };
 
 export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
   props,
 ) => {
-  const {consignment, onPress} = props;
+  const {consignment, onPress, onRemove} = props;
+
+  const onTrashButtonPress = React.useCallback(() => {
+    onRemove(consignment);
+  }, [consignment, onRemove]);
 
   const onItemPress = React.useCallback(() => {
     onPress(consignment);
@@ -56,6 +61,7 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
             name="trash-outline"
             type="ionicon"
             color={LightTheme.colorScheme.onSecondary}
+            onPress={onTrashButtonPress}
           />
         </Pressable>,
       ]}>

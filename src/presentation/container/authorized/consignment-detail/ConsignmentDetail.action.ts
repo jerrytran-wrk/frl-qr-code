@@ -55,12 +55,12 @@ export const ConsignmentDetailActions = {
       {
         subject: `QR Code cho sản phẩm ${consignment.name}`,
         recipients: ['support@example.com'],
-        body: ```
+        body: `
             <b>Tên sản phẩm: ${consignment.name} </b></hr>
             <b>Tên nhà phân phối: ${consignment.distributor?.name} </b></hr>
             <b>Người vận chuyển: ${consignment.shipper} </b></hr>
             <b>Ngày sản xuất: ${consignment.createdDate.toString()} </b></hr>
-        ```, // Android only (defaults to "Send Mail")
+        `, // Android only (defaults to "Send Mail")
         isHTML: true,
         attachments: [
           {

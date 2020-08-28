@@ -1,10 +1,10 @@
 import React from 'react';
-import {} from 'react-native';
+import {Alert} from 'react-native';
 // import from library section
 import {Header, Icon} from 'react-native-elements';
-import {RNCamera} from 'react-native-camera';
+import {RNCamera, BarCodeReadEvent} from 'react-native-camera';
 // importing from alias section
-import {ErrorBoundary, TextView} from '@components';
+import {ErrorBoundary, TextView, FullScreenLoadingIndicator} from '@components';
 import {LightTheme} from '@resources';
 
 // importing from local file
@@ -23,8 +23,32 @@ export const ScanQR: React.FC<ScanQRProps> = (props) => {
     navigation.pop();
   }, [navigation]);
 
+  const onBarCodeRead = React.useCallback(
+    async (code: BarCodeReadEvent) => {
+      if (state.isValidatingCode) {
+        return;
+      }
+      if (code.type !== RNCamera.Constants.BarCodeType.qr) {
+        return;
+      }
+      console.warn(code.data);
+      const isValid = await action.validate(code.data);
+      if (isValid) {
+        return navigation.navigate('ConsignmentDetail', {
+          consignmentId: code.data,
+        });
+      }
+      Alert.alert(
+        'Error',
+        'Mã QR không hợp lệ hoặc không tồn tại trong hệ thống!',
+      );
+    },
+    [action, navigation, state.isValidatingCode],
+  );
+
   return (
     <ErrorBoundary>
+      <FullScreenLoadingIndicator visible={state.isValidatingCode} />
       <Header
         statusBarProps={{
           translucent: true,
@@ -41,21 +65,14 @@ export const ScanQR: React.FC<ScanQRProps> = (props) => {
         style={ScanQRStyles.preview}
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.on}
+        barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need your permission to use your camera',
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}
-        androidRecordAudioPermissionOptions={{
-          title: 'Permission to use audio recording',
-          message: 'We need your permission to use your audio',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-        onGoogleVisionBarcodesDetected={({barcodes}) => {
-          console.log(barcodes);
-        }}
+        onBarCodeRead={onBarCodeRead}
       />
     </ErrorBoundary>
   );
