@@ -94,6 +94,15 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
     [navigation],
   );
 
+  const onEditItem = React.useCallback(
+    (distributor: Distributor) => {
+      navigation.navigate('DistributorEditing', {
+        distributorId: distributor.id,
+      });
+    },
+    [navigation],
+  );
+
   const onScanBarCodeButtonPress = React.useCallback(() => {
     navigation.navigate('ScanQR');
   }, [navigation]);
@@ -101,9 +110,15 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
   const keyExtractor = React.useCallback((item: Distributor) => item.id, []);
   const renderItem = React.useCallback(
     ({item}: ListRenderItemInfo<Distributor>) => {
-      return <DistributorListItem distributor={item} onPress={onItemPress} />;
+      return (
+        <DistributorListItem
+          distributor={item}
+          onEdit={onEditItem}
+          onPress={onItemPress}
+        />
+      );
     },
-    [onItemPress],
+    [onEditItem, onItemPress],
   );
 
   return (

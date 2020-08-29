@@ -11,6 +11,8 @@ import {
   DistributorAdding,
   ConsignmentDetail,
   ScanQR,
+  ConsignmentEditing,
+  DistributorEditing,
 } from '@containers';
 
 enableScreens();
@@ -25,6 +27,8 @@ export const AuthorizedNavigator: React.FC = () => {
       <Stack.Screen name="DistributorAdding" component={DistributorAdding} />
       <Stack.Screen name="ScanQR" component={ScanQR} />
       <Stack.Screen name="ConsignmentDetail" component={ConsignmentDetail} />
+      <Stack.Screen name="ConsignmentEditing" component={ConsignmentEditing} />
+      <Stack.Screen name="DistributorEditing" component={DistributorEditing} />
     </Stack.Navigator>
   );
 };

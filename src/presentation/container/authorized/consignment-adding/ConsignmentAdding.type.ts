@@ -26,10 +26,3 @@ export type ConsignmentAddingProps = {
   navigation: ConsignmentAddingNavigationProps;
   route: ConsignmentAddingRouteProp;
 };
-
-export type ConsignmentAddingData = {
-  name: string;
-  shipper: string;
-  distributorId: string;
-  createdDate: Date;
-};

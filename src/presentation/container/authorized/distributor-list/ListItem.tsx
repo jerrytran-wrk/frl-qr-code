@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Pressable, Alert} from 'react-native';
 
-import {Avatar, Badge, Icon} from 'react-native-elements';
+import {Avatar, Icon, colors} from 'react-native-elements';
 //@ts-ignore
 import Swipeable from 'react-native-swipeable';
 
@@ -13,13 +13,14 @@ import {useDistributorList} from './DistributorList.store';
 export type DistributorListItemProps = {
   distributor: Distributor;
   onPress?: (distributor: Distributor) => void;
+  onEdit: (distributor: Distributor) => void;
 };
 
 export const DistributorListItem: React.FC<DistributorListItemProps> = (
   props,
 ) => {
   const [state, action] = useDistributorList();
-  const {distributor, onPress} = props;
+  const {distributor, onPress, onEdit} = props;
 
   const remove = React.useCallback(async () => {
     await action.remove(distributor.id);
@@ -47,6 +48,10 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
     );
   }, [distributor.name, remove]);
 
+  const onEditButtonPress = React.useCallback(() => {
+    onEdit(distributor);
+  }, [distributor, onEdit]);
+
   const renderAvatar = React.useMemo(() => {
     return (
       <Avatar
@@ -70,7 +75,7 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
 
   return (
     <Swipeable
-      rightButtonWidth={150}
+      rightButtonWidth={100}
       rightButtons={[
         <Pressable style={styles.removeButton}>
           <Icon
@@ -78,6 +83,14 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
             type="ionicon"
             color={LightTheme.colorScheme.onSecondary}
             onPress={onTrashButtonPress}
+          />
+        </Pressable>,
+        <Pressable style={styles.editButton} onPress={onEditButtonPress}>
+          <Icon
+            name="create-outline"
+            type="ionicon"
+            color={LightTheme.colorScheme.onSecondary}
+            onPress={onEditButtonPress}
           />
         </Pressable>,
       ]}>
@@ -123,7 +136,14 @@ const styles = StyleSheet.create({
     backgroundColor: LightTheme.colorScheme.secondary,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 150,
+    width: 100,
+    height: '100%',
+  },
+  editButton: {
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 100,
     height: '100%',
   },
 });

@@ -54,6 +54,15 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
     [navigation],
   );
 
+  const onEditItem = React.useCallback(
+    (consignment: Consignment) => {
+      navigation.navigate('ConsignmentEditing', {
+        consignmentId: consignment.id,
+      });
+    },
+    [navigation],
+  );
+
   const onRemoveItem = React.useCallback(
     async (consignment: Consignment) => {
       await action.remove(consignment.id);
@@ -99,13 +108,14 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
     ({item}: ListRenderItemInfo<Consignment>) => {
       return (
         <ConsignmentListItem
+          onEdit={onEditItem}
           onRemove={onRemoveItem}
           onPress={onItemPress}
           consignment={item}
         />
       );
     },
-    [onItemPress, onRemoveItem],
+    [onItemPress, onRemoveItem, onEditItem],
   );
 
   return (

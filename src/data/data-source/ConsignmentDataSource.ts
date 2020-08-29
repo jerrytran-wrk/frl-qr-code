@@ -4,15 +4,24 @@ import firestore, {
 
 import {Either} from 'tsmonad';
 import {Exception} from '@core';
-import {Consignment, PaginationResult} from '../model';
+import {
+  Consignment,
+  PaginationResult,
+  ConsignmentAddingData,
+  ConsignmentEditingData,
+} from '../model';
 import {DistributorDataSource} from './DistributorDataSource';
+import uuid from 'react-native-uuid';
 
 export interface ConsignmentDataSource {
-  add(consignment: Consignment): Promise<Either<Exception, Consignment>>;
+  add(data: ConsignmentAddingData): Promise<Either<Exception, Consignment>>;
 
   remove(keyword: string): Promise<Either<Exception, boolean>>;
 
-  edit(consignment: Consignment): Promise<Either<Exception, Consignment>>;
+  edit(
+    id: string,
+    data: ConsignmentEditingData,
+  ): Promise<Either<Exception, void>>;
 
   list(
     keyword: string,
@@ -29,16 +38,19 @@ export class FirestoreConsignmentDataSource implements ConsignmentDataSource {
     this.firestore = firestore();
   }
 
-  async add(consignment: Consignment): Promise<Either<Exception, Consignment>> {
+  async add(
+    data: ConsignmentAddingData,
+  ): Promise<Either<Exception, Consignment>> {
+    const consignment: Consignment = {
+      ...data,
+      createdAt: new Date().toISOString(),
+      id: uuid.v4(),
+    };
     try {
       await this.firestore
         .collection(FirestoreConsignmentDataSource.COLLECTION)
         .doc(consignment.id)
-        .set({
-          ...consignment,
-          createdDate: consignment.createdDate.toISOString(),
-          createdAt: consignment.createdAt.toISOString(),
-        });
+        .set(consignment);
       return Either.right(consignment);
     } catch (error) {
       return Either.left(new Exception());
@@ -56,14 +68,15 @@ export class FirestoreConsignmentDataSource implements ConsignmentDataSource {
     }
   }
   async edit(
-    consignment: Consignment,
-  ): Promise<Either<Exception, Consignment>> {
+    id: string,
+    data: ConsignmentEditingData,
+  ): Promise<Either<Exception, void>> {
     try {
       await this.firestore
         .collection(FirestoreConsignmentDataSource.COLLECTION)
-        .doc(consignment.id)
-        .update(consignment);
-      return Either.right(consignment);
+        .doc(id)
+        .update(data);
+      return Either.right(undefined);
     } catch (error) {
       return Either.left(new Exception());
     }
@@ -120,8 +133,8 @@ export class FirestoreConsignmentDataSource implements ConsignmentDataSource {
     const consignment: Consignment = {
       id: doc.id,
       name: data!.name,
-      createdDate: new Date(data!.createdDate),
-      createdAt: new Date(data!.createdAt),
+      createdDate: data!.createdDate,
+      createdAt: data!.createdAt,
       shipper: data!.shipper,
       distributorId: data!.distributorId,
     };

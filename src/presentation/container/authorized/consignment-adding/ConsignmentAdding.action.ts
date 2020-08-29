@@ -1,14 +1,10 @@
-import uuid from 'react-native-uuid';
-
-import {
-  ConsignmentAddingStoreApi,
-  ConsignmentAddingData,
-} from './ConsignmentAdding.type';
+import {ConsignmentAddingStoreApi} from './ConsignmentAdding.type';
 import {INITIAL_STATE} from './constants';
 import {
   FirestoreConsignmentDataSource,
   FirestoreDistributorDataSource,
   Consignment,
+  ConsignmentAddingData,
 } from '@data';
 import {KeyValuePair} from '@components';
 
@@ -22,11 +18,9 @@ export const ConsignmentAddingActions = {
     setState({isAdding: true});
     const dataSource = new FirestoreConsignmentDataSource();
     const result = await dataSource.add({
-      id: uuid.v4(),
       name: data.name,
       distributorId: data.distributorId,
       createdDate: data.createdDate,
-      createdAt: new Date(),
       shipper: data.shipper,
     });
     setState({isAdding: false});

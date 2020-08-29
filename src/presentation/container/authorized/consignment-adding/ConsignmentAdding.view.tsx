@@ -13,11 +13,12 @@ import {
   ValuePicker,
   FullScreenLoadingIndicator,
 } from '@components';
+import {LightTheme} from '@resources';
+
 // importing from local file
 import {useConsignmentAdding} from './ConsignmentAdding.store';
 import {ConsignmentAddingProps} from './ConsignmentAdding.type';
 import {ConsignmentAddingStyles} from './ConsignmentAdding.style';
-import {LightTheme} from '@resources';
 
 export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
   const {colorScheme} = LightTheme;
@@ -45,10 +46,10 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
       distributorId,
       name,
       shipper,
-      createdDate,
+      createdDate: createdDate.toISOString(),
     });
     if (consignment) {
-      return navigation.navigate('ConsignmentDetail', {
+      return navigation.replace('ConsignmentDetail', {
         consignmentId: consignment.id,
       });
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Pressable, Alert} from 'react-native';
 
-import {Avatar, Icon} from 'react-native-elements';
+import {Icon, colors} from 'react-native-elements';
 import moment from 'moment';
 //@ts-ignore
 import Swipeable from 'react-native-swipeable';
@@ -15,12 +15,13 @@ export type ConsignmentListItemProps = {
   consignment: Consignment;
   onPress: (consignment: Consignment) => void;
   onRemove: (consignment: Consignment) => void;
+  onEdit: (consignment: Consignment) => void;
 };
 
 export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
   props,
 ) => {
-  const {consignment, onPress, onRemove} = props;
+  const {consignment, onPress, onRemove, onEdit} = props;
 
   const onTrashButtonPress = React.useCallback(() => {
     Alert.alert(
@@ -42,6 +43,10 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
   const onItemPress = React.useCallback(() => {
     onPress(consignment);
   }, [consignment, onPress]);
+
+  const onEditButtonPress = React.useCallback(() => {
+    onEdit(consignment);
+  }, [consignment, onEdit]);
 
   const renderAvatar = React.useMemo(() => {
     return (
@@ -69,14 +74,22 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
 
   return (
     <Swipeable
-      rightButtonWidth={150}
+      rightButtonWidth={100}
       rightButtons={[
-        <Pressable style={styles.removeButton}>
+        <Pressable style={styles.removeButton} onPress={onTrashButtonPress}>
           <Icon
             name="trash-outline"
             type="ionicon"
             color={LightTheme.colorScheme.onSecondary}
             onPress={onTrashButtonPress}
+          />
+        </Pressable>,
+        <Pressable style={styles.editButton} onPress={onEditButtonPress}>
+          <Icon
+            name="create-outline"
+            type="ionicon"
+            color={LightTheme.colorScheme.onSecondary}
+            onPress={onEditButtonPress}
           />
         </Pressable>,
       ]}>
@@ -119,7 +132,14 @@ const styles = StyleSheet.create({
     backgroundColor: LightTheme.colorScheme.secondary,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 150,
+    width: 100,
+    height: '100%',
+  },
+  editButton: {
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 100,
     height: '100%',
   },
 });

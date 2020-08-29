@@ -6,5 +6,7 @@ export type AuthorizedStoryboardParamList = {
   ConsignmentList: {distributor: Distributor};
   DistributorAdding: undefined;
   ConsignmentDetail: {consignmentId: string};
+  ConsignmentEditing: {consignmentId: string};
   ScanQR: undefined;
+  DistributorEditing: {distributorId: string};
 };

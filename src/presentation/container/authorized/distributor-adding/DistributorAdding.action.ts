@@ -1,4 +1,3 @@
-import uuid from 'react-native-uuid';
 import {DistributorAddingStoreApi} from './DistributorAdding.type';
 import {INITIAL_STATE} from './constants';
 import {FirestoreDistributorDataSource} from '@data';
@@ -13,11 +12,9 @@ export const DistributorAddingActions = {
     setState({isAdding: true});
     const dataSource = new FirestoreDistributorDataSource();
     const result = await dataSource.add({
-      id: uuid.v4(),
       name,
       address,
       phone,
-      createdAt: new Date(),
     });
     setState({isAdding: false});
     return result.caseOf({right: () => true, left: () => false});

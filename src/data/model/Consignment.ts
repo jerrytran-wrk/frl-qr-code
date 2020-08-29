@@ -6,6 +6,20 @@ export interface Consignment {
   distributorId: string;
   name: string;
   shipper: string;
-  createdDate: Date;
-  createdAt: Date;
+  createdDate: string;
+  createdAt: string;
 }
+
+export type ConsignmentAddingData = {
+  name: string;
+  shipper: string;
+  distributorId: string;
+  createdDate: string;
+};
+
+export type ConsignmentEditingData = {
+  name?: string;
+  shipper?: string;
+  distributorId?: string;
+  createdDate?: string;
+};
