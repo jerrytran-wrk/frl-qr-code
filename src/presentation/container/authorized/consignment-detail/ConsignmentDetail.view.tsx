@@ -18,7 +18,7 @@ import {ErrorBoundary, TextView, KeyValueText} from '@components';
 import {useConsignmentDetail} from './ConsignmentDetail.store';
 import {ConsignmentDetailProps} from './ConsignmentDetail.type';
 import {ConsignmentDetailStyles} from './ConsignmentDetail.style';
-import {LightTheme} from '@resources';
+import {LightTheme, Colors} from '@resources';
 
 export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
   const {colorScheme} = LightTheme;
@@ -37,7 +37,7 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
   } = state;
 
   React.useEffect(() => {
-    action.set(route.params.consignment);
+    action.load(route.params.consignmentId);
     return action.reset;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -182,6 +182,8 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
         <QRCode
           //@ts-ignore
           getRef={qrCodeRef}
+          backgroundColor={Colors.WHITE}
+          quietZone={20}
           value={qrCode}
           size={Dimensions.get('window').width * 0.6}
         />

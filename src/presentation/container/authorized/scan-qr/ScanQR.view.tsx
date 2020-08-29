@@ -31,11 +31,10 @@ export const ScanQR: React.FC<ScanQRProps> = (props) => {
       if (code.type !== RNCamera.Constants.BarCodeType.qr) {
         return;
       }
-      console.warn(code.data);
       const isValid = await action.validate(code.data);
       if (isValid) {
         return navigation.navigate('ConsignmentDetail', {
-          consignment: JSON.parse(code.data),
+          consignmentId: code.data,
         });
       }
       Alert.alert(

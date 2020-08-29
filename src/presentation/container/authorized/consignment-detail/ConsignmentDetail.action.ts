@@ -17,35 +17,6 @@ export const ConsignmentDetailActions = {
   reset: () => ({setState}: ConsignmentDetailStoreApi) => {
     setState(INITIAL_STATE);
   },
-
-  set: (consignment: Consignment) => async ({
-    setState,
-  }: ConsignmentDetailStoreApi) => {
-    setState({
-      consignment,
-      title: consignment.name,
-      consignmentName: consignment.name,
-      deliveryDate: moment(consignment.createdDate).format('DD/MM/YYYY'),
-      distributorName: consignment.distributor?.name,
-      qrCode: JSON.stringify(consignment),
-      shipperName: consignment.shipper,
-      distributorAddress: consignment.distributor?.address,
-      distributorPhone: consignment.distributor?.phone,
-    });
-    if (!consignment.distributor) {
-      const dataSource = new FirestoreDistributorDataSource();
-      const result = await dataSource.get(consignment.distributorId);
-      const distributor = result.caseOf({
-        left: () => undefined,
-        right: (r) => r,
-      });
-      setState({
-        distributorName: distributor?.name,
-        distributorAddress: distributor?.address,
-        distributorPhone: distributor?.phone,
-      });
-    }
-  },
   load: (id: string) => async ({setState}: ConsignmentDetailStoreApi) => {
     setState({isLoading: true});
     const dDataSource = new FirestoreDistributorDataSource();
@@ -53,7 +24,17 @@ export const ConsignmentDetailActions = {
     const result = await dataSource.get(id);
     result.do({
       right: (consignment) => {
-        setState({consignment});
+        setState({
+          consignment,
+          title: consignment.name,
+          consignmentName: consignment.name,
+          deliveryDate: moment(consignment.createdDate).format('DD/MM/YYYY'),
+          distributorName: consignment.distributor?.name,
+          qrCode: consignment.id,
+          shipperName: consignment.shipper,
+          distributorAddress: consignment.distributor?.address,
+          distributorPhone: consignment.distributor?.phone,
+        });
       },
     });
     setState({isLoading: false});

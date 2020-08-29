@@ -1,13 +1,15 @@
 import React from 'react';
 import {View, StyleSheet, Pressable, Alert} from 'react-native';
 
-import {Avatar, Badge, Icon} from 'react-native-elements';
+import {Avatar, Icon} from 'react-native-elements';
+import moment from 'moment';
 //@ts-ignore
 import Swipeable from 'react-native-swipeable';
 
-import {TextView} from '@components';
+import {TextView, KeyValueText} from '@components';
 import {Consignment} from '@data';
-import {LightTheme} from '@resources';
+import {LightTheme, Colors} from '@resources';
+import QRCode from 'react-native-qrcode-svg';
 
 export type ConsignmentListItemProps = {
   consignment: Consignment;
@@ -43,11 +45,11 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
 
   const renderAvatar = React.useMemo(() => {
     return (
-      <Avatar
-        size="medium"
-        title={consignment?.name}
-        source={{uri: 'consignment?.image'}}
-        rounded
+      <QRCode
+        backgroundColor={Colors.WHITE}
+        quietZone={5}
+        value={consignment.id}
+        size={60}
       />
     );
   }, [consignment]);
@@ -56,10 +58,10 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
     return (
       <View style={styles.infoContainer}>
         <TextView style={styles.title} text={consignment.name} />
-        <TextView style={styles.description} text={consignment.shipper} />
-        <TextView
-          style={styles.description}
-          text={consignment.createdDate.toString()}
+        <KeyValueText title="Người giao hàng: " value={consignment.shipper} />
+        <KeyValueText
+          title="Ngày giao:  "
+          value={moment(consignment.createdDate).format('DD/MM/YYYY')}
         />
       </View>
     );
@@ -82,7 +84,6 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
         <View style={styles.content}>
           {renderAvatar}
           {renderInformation}
-          <Badge value="3" badgeStyle={styles.badgeStyle} />
           <Icon name="chevron-forward-outline" type="ionicon" />
         </View>
       </Pressable>

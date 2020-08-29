@@ -40,7 +40,7 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
     }, []),
   );
 
-  const title = React.useMemo(() => 'Nhà phân phối', []);
+  const title = React.useMemo(() => 'Danh sách nhà phân phối', []);
 
   const [keyword, setKeyword] = React.useState('');
 

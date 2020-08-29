@@ -48,7 +48,9 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
       createdDate,
     });
     if (consignment) {
-      return navigation.navigate('ConsignmentDetail', {consignment});
+      return navigation.navigate('ConsignmentDetail', {
+        consignmentId: consignment.id,
+      });
     }
     Alert.alert('Thất bại', 'Tạo lô hàng thất bại!');
   }, [action, createdDate, distributorId, name, navigation, shipper]);

@@ -13,7 +13,9 @@ export type KeyValueTextProps = {
 export const KeyValueText: React.FC<KeyValueTextProps> = (props) => {
   return (
     <View style={[styles.container, props.containerStyle]}>
-      <View style={styles.prefixContainer}>{props.prefix}</View>
+      {props.prefix && (
+        <View style={styles.prefixContainer}>{props.prefix}</View>
+      )}
       <TextView style={styles.title} text={props.title} />
       <TextView style={styles.value} text={props.value} />
       {props.children}

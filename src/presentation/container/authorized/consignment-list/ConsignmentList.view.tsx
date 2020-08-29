@@ -23,6 +23,7 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
 
   React.useEffect(() => {
     return action.reset;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useFocusEffect(
@@ -48,7 +49,7 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
 
   const onItemPress = React.useCallback(
     (consignment: Consignment) => {
-      navigation.navigate('ConsignmentDetail', {consignment});
+      navigation.navigate('ConsignmentDetail', {consignmentId: consignment.id});
     },
     [navigation],
   );
