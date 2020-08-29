@@ -10,6 +10,7 @@
 
 import React from 'react';
 import {RootNavigator} from '@presentation';
+import codePush from 'react-native-code-push';
 
 const App = () => {
   return (
@@ -19,4 +20,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default codePush(App);

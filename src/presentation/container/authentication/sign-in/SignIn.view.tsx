@@ -118,7 +118,7 @@ export const SignIn: React.FC<SignInProps> = (props) => {
         {renderForm()}
         <TextView
           style={SignInStyles.copyright}
-          text="Power by Công ty tnhh Vicopha"
+          text="Powered by Công ty TNHH Vicopha"
         />
       </ScrollView>
     </ErrorBoundary>
