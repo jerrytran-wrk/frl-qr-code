@@ -4,7 +4,10 @@ import {RouteProp} from '@react-navigation/native';
 
 import {AuthenticationStoryboardParamList} from '@storyboards';
 
-export type SignInState = {isSigning: boolean};
+export type SignInState = {
+  isSigning: boolean;
+  isValidatingCurrentSession: boolean;
+};
 export type SignInStoreApi = StoreActionApi<SignInState>;
 
 export type SignInNavigationProps = StackNavigationProp<

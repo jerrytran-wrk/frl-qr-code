@@ -10,6 +10,14 @@ export type ConsignmentDetailState = {
   consignment?: Consignment;
   saveQRError?: string;
   shareQRError?: string;
+  qrCode?: string;
+  title?: string;
+  distributorName?: string;
+  distributorPhone?: string;
+  distributorAddress?: string;
+  consignmentName?: string;
+  deliveryDate?: string;
+  shipperName?: string;
 };
 export type ConsignmentDetailStoreApi = StoreActionApi<ConsignmentDetailState>;
 

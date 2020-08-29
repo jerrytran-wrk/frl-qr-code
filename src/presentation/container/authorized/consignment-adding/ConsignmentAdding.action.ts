@@ -8,6 +8,7 @@ import {INITIAL_STATE} from './constants';
 import {
   FirestoreConsignmentDataSource,
   FirestoreDistributorDataSource,
+  Consignment,
 } from '@data';
 import {KeyValuePair} from '@components';
 
@@ -17,7 +18,7 @@ export const ConsignmentAddingActions = {
   },
   add: (data: ConsignmentAddingData) => async ({
     setState,
-  }: ConsignmentAddingStoreApi): Promise<string | null> => {
+  }: ConsignmentAddingStoreApi): Promise<Consignment | null> => {
     setState({isAdding: true});
     const dataSource = new FirestoreConsignmentDataSource();
     const result = await dataSource.add({
@@ -29,7 +30,7 @@ export const ConsignmentAddingActions = {
       shipper: data.shipper,
     });
     setState({isAdding: false});
-    return result.caseOf({right: (r) => r.id, left: () => null});
+    return result.caseOf({right: (r) => r, left: () => null});
   },
   loadDistributor: () => async ({setState}: ConsignmentAddingStoreApi) => {
     setState({isLoadDistributor: true});

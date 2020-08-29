@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, Alert} from 'react-native';
 // import from library section
 import {Header, Icon} from 'react-native-elements';
 
@@ -41,15 +41,16 @@ export const ConsignmentAdding: React.FC<ConsignmentAddingProps> = (props) => {
   const [createdDate, setCreatedDate] = React.useState(new Date());
 
   const onSaveButtonPress = React.useCallback(async () => {
-    const addedId = await action.add({
+    const consignment = await action.add({
       distributorId,
       name,
       shipper,
       createdDate,
     });
-    if (addedId) {
-      navigation.navigate('ConsignmentDetail', {consignmentId: addedId});
+    if (consignment) {
+      return navigation.navigate('ConsignmentDetail', {consignment});
     }
+    Alert.alert('Thất bại', 'Tạo lô hàng thất bại!');
   }, [action, createdDate, distributorId, name, navigation, shipper]);
 
   const goBack = React.useCallback(() => {

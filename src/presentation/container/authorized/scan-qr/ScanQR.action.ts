@@ -7,13 +7,18 @@ export const ScanQRActions = {
     setState(INITIAL_STATE);
   },
   validate: (code: string) => async ({setState}: ScanQRStoreApi) => {
-    if (code.includes('/')) {
+    try {
+      const data = JSON.parse(code);
+      if (!data.id || `${data.id}`.includes('/')) {
+        return false;
+      }
+      setState({isValidatingCode: true});
+      const dataSource = new FirestoreConsignmentDataSource();
+      const result = await dataSource.get(data.id);
+      setState({isValidatingCode: false});
+      return result.caseOf({right: () => true, left: () => false});
+    } catch (error) {
       return false;
     }
-    setState({isValidatingCode: true});
-    const dataSource = new FirestoreConsignmentDataSource();
-    const result = await dataSource.get(code);
-    setState({isValidatingCode: false});
-    return result.caseOf({right: () => true, left: () => false});
   },
 };

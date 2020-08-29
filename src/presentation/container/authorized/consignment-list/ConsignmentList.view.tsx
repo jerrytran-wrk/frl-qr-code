@@ -20,6 +20,11 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
   const {colorScheme} = LightTheme;
   const [state, action] = useConsignmentList();
   const {navigation, route} = props;
+
+  React.useEffect(() => {
+    return action.reset;
+  }, []);
+
   useFocusEffect(
     React.useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -43,7 +48,7 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
 
   const onItemPress = React.useCallback(
     (consignment: Consignment) => {
-      navigation.navigate('ConsignmentDetail', {consignmentId: consignment.id});
+      navigation.navigate('ConsignmentDetail', {consignment});
     },
     [navigation],
   );

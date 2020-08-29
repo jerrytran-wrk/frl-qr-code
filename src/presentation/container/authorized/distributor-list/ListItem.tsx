@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import {View, StyleSheet, Pressable, Alert} from 'react-native';
 
 import {Avatar, Badge, Icon} from 'react-native-elements';
 //@ts-ignore
@@ -21,14 +21,31 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
   const [state, action] = useDistributorList();
   const {distributor, onPress} = props;
 
+  const remove = React.useCallback(async () => {
+    await action.remove(distributor.id);
+    action.refresh(state.keyword);
+  }, [action, distributor.id, state.keyword]);
+
   const onItemPress = React.useCallback(() => {
     onPress && onPress(distributor);
   }, [onPress, distributor]);
 
   const onTrashButtonPress = React.useCallback(async () => {
-    await action.remove(distributor.id);
-    action.refresh(state.keyword);
-  }, [action, distributor, state.keyword]);
+    Alert.alert(
+      'Cảnh báo',
+      `Bạn có muốn xóa nhà phân phối ${distributor.name}?`,
+      [
+        {
+          text: 'Đồng ý',
+          onPress: remove,
+        },
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+      ],
+    );
+  }, [distributor.name, remove]);
 
   const renderAvatar = React.useMemo(() => {
     return (
@@ -46,6 +63,7 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
       <View style={styles.infoContainer}>
         <TextView style={styles.title} text={distributor.name} />
         <TextView style={styles.description} text={distributor.address} />
+        <TextView style={styles.phone} text={distributor.phone} />
       </View>
     );
   }, [distributor]);
@@ -67,7 +85,6 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
         <View style={styles.content}>
           {renderAvatar}
           {renderInformation}
-          <Badge value="3" badgeStyle={styles.badgeStyle} />
           <Icon name="chevron-forward-outline" type="ionicon" />
         </View>
       </Pressable>
@@ -96,6 +113,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   description: {},
+  phone: {
+    color: LightTheme.colorScheme.secondary,
+  },
   badgeStyle: {
     backgroundColor: LightTheme.colorScheme.secondary,
   },

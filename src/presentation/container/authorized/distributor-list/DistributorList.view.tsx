@@ -1,5 +1,10 @@
 import React from 'react';
-import {ListRenderItemInfo, View, InteractionManager} from 'react-native';
+import {
+  ListRenderItemInfo,
+  View,
+  InteractionManager,
+  Alert,
+} from 'react-native';
 // import from library section
 import {Header, Icon, SearchBar} from 'react-native-elements';
 import {useFocusEffect} from '@react-navigation/native';
@@ -13,11 +18,14 @@ import {useDistributorList} from './DistributorList.store';
 import {DistributorListProps} from './DistributorList.type';
 import {DistributorListStyles} from './DistributorList.style';
 import {DistributorListItem} from './ListItem';
+import {NavigatorContext} from '@context';
 
 export const DistributorList: React.FC<DistributorListProps> = (props) => {
   const {colorScheme} = LightTheme;
   const [state, action] = useDistributorList();
   const {navigation} = props;
+
+  const {setIsAuthorized} = React.useContext(NavigatorContext);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -47,6 +55,14 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
     [],
   );
 
+  const singOut = React.useCallback(async () => {
+    const result = await action.signOut();
+    if (result) {
+      return setIsAuthorized(false);
+    }
+    Alert.alert('Đăng xuất thất bại', 'Vui lòng thử lại sau');
+  }, [action, setIsAuthorized]);
+
   const onSearchBarChanged = React.useCallback(
     (value: string) => {
       setKeyword(value);
@@ -54,6 +70,18 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
     },
     [search],
   );
+  const onSignOutButtonPress = React.useCallback(() => {
+    Alert.alert('Cảnh báo', 'Bạn có muốn thoát khỏi phiên làm việc?', [
+      {
+        text: 'Đồng ý',
+        onPress: singOut,
+      },
+      {
+        text: 'Hủy',
+        style: 'cancel',
+      },
+    ]);
+  }, [singOut]);
 
   const onAddButtonPress = React.useCallback(() => {
     navigation.navigate('DistributorAdding');
@@ -90,6 +118,13 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
           backgroundColor={colorScheme.primary}
           centerComponent={
             <TextView text={title} style={DistributorListStyles.title} />
+          }
+          leftComponent={
+            <Icon
+              name="log-out-outline"
+              type="ionicon"
+              onPress={onSignOutButtonPress}
+            />
           }
           rightComponent={
             <Icon

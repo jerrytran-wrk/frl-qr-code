@@ -9,6 +9,7 @@ export type DistributorListState = {
   isLoading: boolean;
   distributors: Distributor[];
   keyword: string;
+  isSigningOut: boolean;
 };
 export type DistributorListStoreApi = StoreActionApi<DistributorListState>;
 

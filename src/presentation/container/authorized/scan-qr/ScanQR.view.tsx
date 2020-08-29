@@ -35,7 +35,7 @@ export const ScanQR: React.FC<ScanQRProps> = (props) => {
       const isValid = await action.validate(code.data);
       if (isValid) {
         return navigation.navigate('ConsignmentDetail', {
-          consignmentId: code.data,
+          consignment: JSON.parse(code.data),
         });
       }
       Alert.alert(

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, Alert} from 'react-native';
 // import from library section
 import {Icon, Header} from 'react-native-elements';
 // importing from alias section
@@ -34,9 +34,14 @@ export const DistributorAdding: React.FC<DistributorAddingProps> = (props) => {
     navigation.pop();
   }, [navigation]);
 
-  const onSaveButtonPress = React.useCallback(() => {
-    action.add(name, address, phone);
-  }, [action, address, name, phone]);
+  const onSaveButtonPress = React.useCallback(async () => {
+    const success = await action.add(name, address, phone);
+    if (success) {
+      goBack();
+      return Alert.alert('Thành công', 'Tạo nhà phân phối thành công!');
+    }
+    Alert.alert('Thất bại', 'Tạo nhà phân phối không thành công!');
+  }, [action, address, goBack, name, phone]);
 
   const renderForm = React.useCallback(() => {
     return (

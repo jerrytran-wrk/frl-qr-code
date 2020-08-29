@@ -1,10 +1,10 @@
-import {Distributor} from '@data';
+import {Distributor, Consignment} from '@data';
 
 export type AuthorizedStoryboardParamList = {
   DistributorList: undefined;
   ConsignmentAdding: {distributor: Distributor};
   ConsignmentList: {distributor: Distributor};
   DistributorAdding: undefined;
-  ConsignmentDetail: {consignmentId: string};
+  ConsignmentDetail: {consignment: Consignment};
   ScanQR: undefined;
 };

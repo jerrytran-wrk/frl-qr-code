@@ -19,4 +19,10 @@ export const SignInStyles = StyleSheet.create({
     alignSelf: 'center',
     color: LightTheme.colorScheme.secondary,
   },
+  centerAll: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: LightTheme.colorScheme.background,
+  },
 });

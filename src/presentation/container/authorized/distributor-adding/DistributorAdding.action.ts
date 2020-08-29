@@ -9,10 +9,10 @@ export const DistributorAddingActions = {
   },
   add: (name: string, address: string, phone: string) => async ({
     setState,
-  }: DistributorAddingStoreApi) => {
+  }: DistributorAddingStoreApi): Promise<boolean> => {
     setState({isAdding: true});
     const dataSource = new FirestoreDistributorDataSource();
-    await dataSource.add({
+    const result = await dataSource.add({
       id: uuid.v4(),
       name,
       address,
@@ -20,5 +20,6 @@ export const DistributorAddingActions = {
       createdAt: new Date(),
     });
     setState({isAdding: false});
+    return result.caseOf({right: () => true, left: () => false});
   },
 };

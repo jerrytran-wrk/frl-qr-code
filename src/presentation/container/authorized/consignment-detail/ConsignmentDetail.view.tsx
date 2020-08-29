@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  InteractionManager,
   View,
   ActivityIndicator,
   Dimensions,
   PermissionsAndroid,
+  ScrollView,
+  Alert,
 } from 'react-native';
 // import from library section
-import {useFocusEffect} from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg';
 import {Icon, Header} from 'react-native-elements';
 import Svg from 'react-native-svg';
@@ -25,25 +25,22 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
   const [state, action] = useConsignmentDetail();
   const {navigation, route} = props;
 
+  const {
+    title,
+    consignmentName,
+    distributorName,
+    shipperName,
+    deliveryDate,
+    qrCode,
+    distributorAddress,
+    distributorPhone,
+  } = state;
+
   React.useEffect(() => {
+    action.set(route.params.consignment);
     return action.reset;
-  }, [action.reset]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const task = InteractionManager.runAfterInteractions(() => {
-        if (navigation.isFocused()) {
-          return action.load(route.params.consignmentId);
-        }
-        action.reset();
-      });
-
-      return () => task.cancel();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
-  );
-
-  const title = React.useMemo(() => state.consignment?.name, [state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const qrCodeRef = React.useRef<Svg>(null);
 
@@ -67,7 +64,9 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
     return new Promise(async (resolve, reject) => {
       const granted = await hasAndroidPermission();
       if (!granted) {
+        Alert.alert('Permission denied', 'Không có quyền truy cập bộ nhớ!');
         reject();
+        return;
       }
       //@ts-ignore
       qrCodeRef.current!.toDataURL(async (data: string) => {
@@ -77,12 +76,22 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
     });
   }, [action, hasAndroidPermission, state]);
 
-  const onSaveButtonPress = React.useCallback(() => saveQR(), [saveQR]);
+  const onSaveButtonPress = React.useCallback(async () => {
+    await saveQR();
+    if (state.saveQRError) {
+      return Alert.alert('Thất bại', 'Lưu mã QR không thành công');
+    }
+    Alert.alert('Thành công', 'Lưu mã QR thành công');
+  }, [saveQR, state.saveQRError]);
 
   const onShareButtonPress = React.useCallback(async () => {
     await saveQR();
-    action.share(state.consignment!);
-  }, [action, saveQR, state.consignment]);
+    await action.share(state.consignment!);
+    if (state.saveQRError) {
+      return Alert.alert('Thất bại', 'Share mã QR không thành công');
+    }
+    Alert.alert('Thành công', 'Share mã QR thành công');
+  }, [action, saveQR, state.consignment, state.saveQRError]);
 
   const renderContent = () => {
     if (state.isLoading) {
@@ -94,32 +103,46 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
     }
     return (
       <>
-        <View style={ConsignmentDetailStyles.information}>
+        <ScrollView contentContainerStyle={ConsignmentDetailStyles.information}>
           <KeyValueText
             containerStyle={ConsignmentDetailStyles.informationRowPadding}
-            prefix={<Icon name="save-outline" type="ionicon" />}
+            prefix={<Icon name="cube-outline" type="ionicon" />}
             title="Tên lô hàng: "
-            value={state.consignment?.name}
+            value={consignmentName}
           />
           <KeyValueText
             containerStyle={ConsignmentDetailStyles.informationRowPadding}
-            prefix={<Icon name="save-outline" type="ionicon" />}
+            prefix={<Icon name="albums-outline" type="ionicon" />}
             title="Tên nhà phân phối: "
-            value={state.consignment?.distributor?.name}
+            value={distributorName}
           />
           <KeyValueText
             containerStyle={ConsignmentDetailStyles.informationRowPadding}
-            prefix={<Icon name="save-outline" type="ionicon" />}
+            prefix={<Icon name="phone-portrait-outline" type="ionicon" />}
+            title="Sdt nhà phân phối: "
+            value={distributorPhone}
+          />
+
+          <KeyValueText
+            containerStyle={ConsignmentDetailStyles.informationRowPadding}
+            prefix={<Icon name="compass-outline" type="ionicon" />}
+            title="Địa chỉ nhà phân phối: "
+            value={distributorAddress}
+          />
+
+          <KeyValueText
+            containerStyle={ConsignmentDetailStyles.informationRowPadding}
+            prefix={<Icon name="shirt-outline" type="ionicon" />}
             title="Người giao hàng: "
-            value={state.consignment?.shipper}
+            value={shipperName}
           />
           <KeyValueText
             containerStyle={ConsignmentDetailStyles.informationRowPadding}
-            prefix={<Icon name="save-outline" type="ionicon" />}
-            title="Ngày sản xuất: "
-            value={state.consignment?.createdDate.toString()}
+            prefix={<Icon name="calendar-outline" type="ionicon" />}
+            title="Ngày giao: "
+            value={deliveryDate}
           />
-        </View>
+        </ScrollView>
       </>
     );
   };
@@ -159,7 +182,7 @@ export const ConsignmentDetail: React.FC<ConsignmentDetailProps> = (props) => {
         <QRCode
           //@ts-ignore
           getRef={qrCodeRef}
-          value={route.params.consignmentId}
+          value={qrCode}
           size={Dimensions.get('window').width * 0.6}
         />
       </View>

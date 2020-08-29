@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import {View, StyleSheet, Pressable, Alert} from 'react-native';
 
 import {Avatar, Badge, Icon} from 'react-native-elements';
 //@ts-ignore
@@ -21,7 +21,20 @@ export const ConsignmentListItem: React.FC<ConsignmentListItemProps> = (
   const {consignment, onPress, onRemove} = props;
 
   const onTrashButtonPress = React.useCallback(() => {
-    onRemove(consignment);
+    Alert.alert(
+      'Cảnh báo',
+      `Bạn có muốn xóa nhà lô hàng ${consignment.name}?`,
+      [
+        {
+          text: 'Đồng ý',
+          onPress: () => onRemove(consignment),
+        },
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+      ],
+    );
   }, [consignment, onRemove]);
 
   const onItemPress = React.useCallback(() => {
