@@ -37,17 +37,15 @@ export const DistributorEditingActions = {
   edit: () => async ({
     setState,
     getState,
-  }: DistributorEditingStoreApi): Promise<void> => {
+  }: DistributorEditingStoreApi): Promise<boolean> => {
     const {editingData, distributor} = getState();
     setState({isEditing: true});
     const dataSource = new FirestoreDistributorDataSource();
     const result = await dataSource.edit(distributor!.id, editingData);
     setState({isEditing: false});
     return result.caseOf({
-      right: (r) => r,
-      left: () => {
-        setState({editingError: 'Chỉnh sửa nhà phân phối thất bại!'});
-      },
+      right: () => true,
+      left: () => false,
     });
   },
 };

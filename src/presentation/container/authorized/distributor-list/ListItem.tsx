@@ -72,7 +72,6 @@ export const DistributorListItem: React.FC<DistributorListItemProps> = (
       </View>
     );
   }, [distributor]);
-
   return (
     <Swipeable
       rightButtonWidth={100}

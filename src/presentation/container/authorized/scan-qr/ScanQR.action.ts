@@ -17,6 +17,7 @@ export const ScanQRActions = {
       setState({isValidatingCode: false});
       return result.caseOf({right: () => true, left: () => false});
     } catch (error) {
+      setState({isValidatingCode: false});
       return false;
     }
   },

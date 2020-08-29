@@ -142,13 +142,17 @@ export const ConsignmentList: React.FC<ConsignmentListProps> = (props) => {
             />
           }
         />
-        <SearchBar
-          onChangeText={onSearchBarChanged}
-          platform="ios"
-          showCancel={false}
-          value={keyword}
-        />
+
         <ListView
+          ListHeaderComponent={
+            <SearchBar
+              onChangeText={onSearchBarChanged}
+              platform="ios"
+              showCancel={false}
+              value={keyword}
+            />
+          }
+          stickyHeaderIndices={[0]}
           refreshing={state.isLoading}
           onRefresh={onRefresh}
           data={state.consignments}

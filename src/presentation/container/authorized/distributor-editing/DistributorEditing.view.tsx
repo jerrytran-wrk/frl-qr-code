@@ -29,9 +29,9 @@ export const DistributorEditing: React.FC<DistributorEditingProps> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const {editingData, isEditing, isLoadingDistributor, editingError} = state;
+  const {editingData, isEditing, isLoadingDistributor} = state;
 
-  const title = React.useMemo(() => 'Thêm nhà phân phối', []);
+  const title = React.useMemo(() => 'Sửa nhà phân phối', []);
   const namePlaceholder = React.useMemo(() => 'Tên nhà Phân phối', []);
   const phonePlaceholder = React.useMemo(() => 'Số điện thoại', []);
   const addressPlaceholder = React.useMemo(() => 'Địa chỉ', []);
@@ -41,13 +41,13 @@ export const DistributorEditing: React.FC<DistributorEditingProps> = (
   }, [navigation]);
 
   const onSaveButtonPress = React.useCallback(async () => {
-    await action.edit();
-    if (!editingError) {
+    const success = await action.edit();
+    if (success) {
       goBack();
-      return Alert.alert('Thành công', 'Sửa nhà phân phối không thành công!');
+      return Alert.alert('Thành công', 'Sửa nhà phân phối thành công!');
     }
-    Alert.alert('Thất bại', editingError);
-  }, [action, editingError, goBack]);
+    Alert.alert('Thất bại', 'Sửa nhà phân phối không thành công!');
+  }, [action, goBack]);
 
   const renderForm = () => {
     return (

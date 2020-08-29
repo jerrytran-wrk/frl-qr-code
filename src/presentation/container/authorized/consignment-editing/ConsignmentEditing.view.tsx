@@ -40,7 +40,7 @@ export const ConsignmentEditing: React.FC<ConsignmentEditingProps> = (
     return () => action.reset();
   }, [action, route.params.consignmentId]);
 
-  const title = React.useMemo(() => 'Sửa Lô Hàng', []);
+  const title = React.useMemo(() => 'Sửa Lô hàng', []);
   const shipperPlaceholder = React.useMemo(() => 'Người giao hàng', []);
   const consignmentPlaceholder = React.useMemo(() => 'Lô Hàng', []);
 

@@ -1,8 +1,12 @@
 import React from 'react';
-import {Alert} from 'react-native';
+import {ToastAndroid} from 'react-native';
 // import from library section
 import {Header, Icon} from 'react-native-elements';
-import {RNCamera, BarCodeReadEvent} from 'react-native-camera';
+import {
+  RNCamera,
+  // BarCodeReadEvent,
+  GoogleVisionBarcodesDetectedEvent,
+} from 'react-native-camera';
 // importing from alias section
 import {ErrorBoundary, TextView, FullScreenLoadingIndicator} from '@components';
 import {LightTheme} from '@resources';
@@ -17,14 +21,15 @@ export const ScanQR: React.FC<ScanQRProps> = (props) => {
   const [state, action] = useScanQR();
   const {navigation} = props;
 
-  const title = React.useMemo(() => 'Scan Lô hàng', []);
+  const title = React.useMemo(() => 'Quét mã', []);
 
   const goBack = React.useCallback(() => {
     navigation.pop();
   }, [navigation]);
 
-  const onBarCodeRead = React.useCallback(
-    async (code: BarCodeReadEvent) => {
+  const onGoogleVisionBarcodesDetected = React.useCallback(
+    async ({barcodes}: GoogleVisionBarcodesDetectedEvent) => {
+      const [code] = barcodes;
       if (state.isValidatingCode) {
         return;
       }
@@ -37,14 +42,35 @@ export const ScanQR: React.FC<ScanQRProps> = (props) => {
           consignmentId: code.data,
         });
       }
-      Alert.alert(
-        'Error',
+      ToastAndroid.show(
         'Mã QR không hợp lệ hoặc không tồn tại trong hệ thống!',
+        ToastAndroid.LONG,
       );
     },
     [action, navigation, state.isValidatingCode],
   );
 
+  // const onBarCodeRead = React.useCallback(
+  //   async (code: BarCodeReadEvent) => {
+  //     if (state.isValidatingCode) {
+  //       return;
+  //     }
+  //     if (code.type !== RNCamera.Constants.BarCodeType.qr) {
+  //       return;
+  //     }
+  //     const isValid = await action.validate(code.data);
+  //     if (isValid) {
+  //       return navigation.navigate('ConsignmentDetail', {
+  //         consignmentId: code.data,
+  //       });
+  //     }
+  //     ToastAndroid.show(
+  //       'Mã QR không hợp lệ hoặc không tồn tại trong hệ thống!',
+  //       ToastAndroid.LONG,
+  //     );
+  //   },
+  //   [action, navigation, state.isValidatingCode],
+  // );
   return (
     <ErrorBoundary>
       <FullScreenLoadingIndicator visible={state.isValidatingCode} />
@@ -71,7 +97,8 @@ export const ScanQR: React.FC<ScanQRProps> = (props) => {
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}
-        onBarCodeRead={onBarCodeRead}
+        // onBarCodeRead={onBarCodeRead}
+        onGoogleVisionBarcodesDetected={onGoogleVisionBarcodesDetected}
       />
     </ErrorBoundary>
   );

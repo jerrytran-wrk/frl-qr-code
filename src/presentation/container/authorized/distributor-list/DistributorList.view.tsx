@@ -149,13 +149,16 @@ export const DistributorList: React.FC<DistributorListProps> = (props) => {
             />
           }
         />
-        <SearchBar
-          onChangeText={onSearchBarChanged}
-          value={keyword}
-          platform="ios"
-          showCancel={false}
-        />
         <ListView
+          ListHeaderComponent={
+            <SearchBar
+              onChangeText={onSearchBarChanged}
+              value={keyword}
+              platform="ios"
+              showCancel={false}
+            />
+          }
+          stickyHeaderIndices={[0]}
           onRefresh={onRefresh}
           refreshing={state.isLoading}
           data={state.distributors}

@@ -109,21 +109,24 @@ export class FirestoreConsignmentDataSource implements ConsignmentDataSource {
     }
   }
   async get(id: string): Promise<Either<Exception, Consignment>> {
-    const document = await this.firestore
-      .collection(FirestoreConsignmentDataSource.COLLECTION)
-      .doc(id)
-      .get();
-    const consignment = this.documentToConsignment(document);
+    try {
+      const document = await this.firestore
+        .collection(FirestoreConsignmentDataSource.COLLECTION)
+        .doc(id)
+        .get();
+      const consignment = this.documentToConsignment(document);
+      const result = await this.distributorDataSource?.get(
+        consignment.distributorId,
+      );
 
-    const result = await this.distributorDataSource?.get(
-      consignment.distributorId,
-    );
+      result?.do({
+        right: (distributor) => (consignment.distributor = distributor),
+      });
 
-    result?.do({
-      right: (distributor) => (consignment.distributor = distributor),
-    });
-
-    return Either.right(consignment);
+      return Either.right(consignment);
+    } catch (error) {
+      return Either.left(new Exception());
+    }
   }
 
   private documentToConsignment(
